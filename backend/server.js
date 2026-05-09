@@ -289,7 +289,7 @@ npm install express pg cors bcryptjs jsonwebtoken
 # Railway Variables
 
 ```env
-DATABASE_URL=postgresql://postgres:[Pamungkas99]@db.gboztwuknuyyrduhcjmz.supabase.co:5432/postgres
+DATABASE_URL=postgresql://postgres:Pamungkas99@db.gboztwuknuyyrduhcjmz.supabase.co:5432/postgres
 ```
 
 # Jalankan lokal
