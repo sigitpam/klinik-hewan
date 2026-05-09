@@ -11,10 +11,6 @@ const app = express();
 const SECRET = process.env.JWT_SECRET || "klinik_rahasia_pamungkas_99";
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server jalan di port ${PORT}`);
-});
-
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -132,6 +128,6 @@ app.get("/api/stat/dashboard", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server jalan di port ${PORT}`);
 });
