@@ -106,7 +106,6 @@ app.get("/api/stat/dashboard", async (req, res) => {
     res.status(500).json({ error: "Gagal statistik" });
   }
 });
-
 // =========================
 // 5. ASYNC STARTUP (SOLUSI HANG)
 // =========================
