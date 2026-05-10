@@ -337,7 +337,7 @@ async function doLogin(){
     document.querySelector('.app-wrapper').style.display='block';
     loadData(); // Ambil data satwa setelah login
   } else {
-    alert("Login Gagal: " + data.msg);
+    alert("Login Gagal: " + (data.msg || data.error || "Unknown error"));
   }
 }
 function checkSession(){
@@ -349,6 +349,16 @@ function checkSession(){
     logout();
     return false;
   }
+
+  const now = Date.now();
+  if(now - loginTime > exp){
+    alert("Session login telah habis (60 menit). Silakan login kembali.");
+    logout();
+    return false;
+  }
+
+  return true;
+}
 
   const now = Date.now();
   if(now - loginTime > exp){
