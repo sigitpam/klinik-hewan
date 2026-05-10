@@ -20,7 +20,7 @@ app.use(express.json());
 // =========================
 const db = new Pool({
   // Menggunakan URL langsung agar tidak error saat running lokal
-  connectionString: process.env.DATABASE_URL || "postgresql://postgres:Pamungkas99@db.gboztwuknuyyrduhcjmz.supabase.co:5432/postgres",
+  connectionString: process.env.DATABASE_URL || ,
   ssl: {
     rejectUnauthorized: false, 
   },
