@@ -8,11 +8,11 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 // =========================
-// CONFIG & PORT (SANGAT PENTING)
+// CONFIG & PORT
 // =========================
 const SECRET = process.env.JWT_SECRET || "klinik_rahasia_pamungkas_99";
-// Railway mengisi process.env.PORT secara dinamis. 
-const PORT = process.env.PORT || 3000; 
+// Pastikan tidak ada karakter tersembunyi di akhir baris ini
+const PORT = process.env.PORT || 3000;
 
 // =========================
 // MIDDLEWARE
@@ -35,8 +35,7 @@ db.connect()
   .catch((err) => console.error("❌ Koneksi Database Gagal:", err.message));
 
 // =========================
-// 1. HEALTH CHECK ROUTE (WAJIB PALING ATAS)
-// Agar Railway tahu server sudah siap menerima trafik
+// 1. HEALTH CHECK ROUTE (WAJIB)
 // =========================
 app.get("/", (req, res) => {
   console.log("🔔 Health check dipanggil oleh Railway");
@@ -99,8 +98,6 @@ app.post("/api/satwa", async (req, res) => {
   }
 });
 
-// ... (Put & Delete tetap sama) ...
-
 // =========================
 // 4. STATISTIK
 // =========================
@@ -117,7 +114,6 @@ app.get("/api/stat/dashboard", async (req, res) => {
 
 // =========================
 // 5. START SERVER
-// Gunakan '0.0.0.0' agar bisa diakses dari luar container
 // =========================
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server jalan di port ${PORT}`);
