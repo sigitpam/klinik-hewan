@@ -16,7 +16,13 @@ const PORT = process.env.PORT || 3000;
 // =========================
 // MIDDLEWARE
 // =========================
-app.use(cors());
+app.use(cors({
+  origin: "https://spontaneous-tartufo-d9ad4d.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
+app.options("*", cors());
 app.use(express.json());
 
 // =========================
