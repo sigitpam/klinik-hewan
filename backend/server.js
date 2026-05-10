@@ -11,7 +11,6 @@ const app = express();
 // CONFIG & PORT
 // =========================
 const SECRET = process.env.JWT_SECRET || "klinik_rahasia_pamungkas_99";
-// Pastikan tidak ada karakter tersembunyi di akhir baris ini
 const PORT = process.env.PORT || 3000;
 
 // =========================
@@ -30,16 +29,12 @@ const db = new Pool({
   },
 });
 
-db.connect()
-  .then(() => console.log("✅ Database Supabase Terhubung!"))
-  .catch((err) => console.error("❌ Koneksi Database Gagal:", err.message));
-
 // =========================
-// 1. HEALTH CHECK ROUTE (WAJIB)
+// 1. HEALTH CHECK ROUTE
+// Harus berada di atas route lain & sebelum server listen
 // =========================
 app.get("/", (req, res) => {
-  console.log("🔔 Health check dipanggil oleh Railway");
-  res.status(200).send("Backend Klinik Hewan Ready!");
+  res.status(200).send("✅ Backend Klinik Hewan Ready & Running!");
 });
 
 // =========================
@@ -113,8 +108,24 @@ app.get("/api/stat/dashboard", async (req, res) => {
 });
 
 // =========================
-// 5. START SERVER
+// 5. ASYNC STARTUP (SOLUSI HANG)
 // =========================
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server jalan di port ${PORT}`);
-});
+async function startApp() {
+  try {
+    // Pastikan database terhubung dulu
+    const client = await db.connect();
+    console.log("✅ Database Supabase Terhubung!");
+    client.release();
+
+    // Baru jalankan listen
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 KONFIRMASI: Server benar-benar aktif di port ${PORT}`);
+    });
+
+  } catch (err) {
+    console.error("❌ Gagal memulai aplikasi:", err.message);
+    process.exit(1); 
+  }
+}
+
+startApp();
