@@ -61,12 +61,20 @@ app.post("/api/login", async (req, res) => {
 // =========================
 app.get("/api/satwa", async (req, res) => {
   try {
-    const sql = `
-      SELECT id, nama_satwa, jenis, ras, jenis_kelamin, 
-      TO_CHAR(tanggal_lahir,'DD-MM-YYYY') AS tanggal_lahir,
-      klasifikasi, nama_pemilik, alamat_pemilik,
-      DATE_PART('year', AGE(tanggal_lahir)) AS umur
-      FROM satwa ORDER BY id DESC
+const sql = `
+      SELECT
+        id,
+        nama_satwa,
+        jenis,
+        ras,
+        jenis_kelamin,
+        TO_CHAR(tanggal_lahir, 'DD-MM-YYYY') AS tanggal_lahir,
+        klasifikasi,
+        nama_pemilik,
+        alamat_pemilik, -- KOMA WAJIB ADA DI SINI
+        DATE_PART('year', AGE(tanggal_lahir::DATE)) AS umur
+      FROM satwa
+      ORDER BY id DESC
     `;
     const result = await db.query(sql);
     res.json(result.rows);
