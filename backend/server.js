@@ -226,12 +226,16 @@ app.get("/api/stat/dashboard", async (req, res) => {
 });
 
 // =========================
+// =========================
+// HEALTH CHECK (WAJIB DI ATAS LISTEN)
+// =========================
+app.get("/", (req, res) => {
+  res.status(200).send("Server is alive!");
+});
+
+// =========================
 // START SERVER
 // =========================
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server jalan di port ${PORT}`);
-});
-// Tambahkan ini agar Railway tahu server benar-benar aktif
-app.get("/", (req, res) => {
-  res.status(200).send("Server is alive!");
 });
