@@ -13,15 +13,18 @@ const app = express();
 // =====================================
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
-
 // =====================================
 // MIDDLEWARE
 // =====================================
+
 app.use(cors({
   origin: "*",
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+// HANDLE PREFLIGHT
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -509,7 +512,29 @@ app.get("/api/stat/kesehatan", async(req,res)=>{
     });
   }
 });
+// =====================================
+// TEST DB
+// =====================================
+app.get("/api/test-db", async(req,res)=>{
 
+  try{
+
+    const result = await db.query("SELECT NOW()");
+
+    res.json({
+      success:true,
+      time:result.rows[0]
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      error:err.message
+    });
+  }
+});
 // =====================================
 // START SERVER
 // =====================================
