@@ -168,6 +168,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </h3>
 
 <table class="table table-bordered">
+<thead>
 <tr>
 <th>No</th>
 <th>Nama</th>
@@ -310,6 +311,18 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
 
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-primary" onclick="saveKesehatan()">
+Simpan
+</button>
+</div>
+
+</div>
+</div>
+</div>
+
 <!-- MODAL OBAT -->
 <div class="modal fade" id="obatModal">
 
@@ -338,13 +351,7 @@ Simpan
 </div>
 </div>
 </div>
-</div>
-<div class="modal-footer">
-<button class="btn btn-primary" onclick="saveKesehatan()">Simpan</button>
-</div>
-</div>
-</div>
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -363,17 +370,18 @@ function showPage(p){
 
   if(!checkSession()) return;
 
-  // sembunyikan semua halaman
   document.getElementById('page-dashboard').style.display='none';
   document.getElementById('page-satwa').style.display='none';
   document.getElementById('page-dokter').style.display='none';
   document.getElementById('page-obat').style.display='none';
   document.getElementById('page-kesehatan').style.display='none';
 
-  // tampilkan halaman dipilih
   document.getElementById('page-' + p).style.display='block';
 
-  // load data sesuai halaman
+  if(p === 'dashboard'){
+    loadData();
+  }
+
   if(p === 'dokter'){
     loadDokter();
   }
@@ -387,8 +395,7 @@ function showPage(p){
   if(p === 'obat'){
     loadObat();
   }
-}
-  document.getElementById('page-obat').style.display='none';
+} 
 
 async function doLogin(){
   const res = await fetch(API + '/login',{
@@ -522,7 +529,11 @@ async function saveData(){
     klasifikasi:fKlasifikasi.value,
     nama_pemilik:fPemilik.value,
     alamat_pemilik:fAlamat.value
-  };
+  }
+    if(!fNama.value){
+  alert("Nama satwa wajib diisi");
+  return;
+};
 
   let url=API+"/satwa", method="POST";
   if(editId){ url=API+"/satwa/"+editId; method="PUT"; }
@@ -589,7 +600,7 @@ async function renderCharts(){
   });
 }
 
-if(localStorage.token){
+if(localStorage.getItem("token")){
   loginPage.style.display='none';
   document.querySelector('.app-wrapper').style.display='block';
   loadData();
@@ -660,7 +671,11 @@ async function saveDokter(){
     telepon:dTelepon.value,
     jenis_kelamin:dJK.value,
     nomor_strv:dStrv.value
-  };
+  }
+    if(!dNama.value){
+  alert("Nama dokter wajib diisi");
+  return;
+};
 
   let url=API+"/dokter", method="POST";
   if(editDokterId){
@@ -689,31 +704,49 @@ async function hapusDokter(id){
 let kesehatan = [];
 
 async function openKesehatan(){
+
   await loadSatwaOption();
   await loadDokterOption();
+
   kTanggal.value="";
+  kGejala.value="";
   kDiagnosa.value="";
   kPengobatan.value="";
+
   $("#kesehatanModal").modal("show");
 }
-
+  
 async function saveKesehatan(){
-const data = {
-  tanggal: kTanggal.value,
-  satwa_id: kSatwa.value,
-  dokter_id: kDokter.value,
-  gejala_klinis: kGejala.value,
-  diagnosa: kDiagnosa.value,
-  pengobatan: kPengobatan.value
-};
 
-  await fetch(API + "/kesehatan", {
+  if(!kTanggal.value){
+    alert("Tanggal wajib diisi");
+    return;
+  }
+
+  if(!kGejala.value){
+    alert("Gejala klinis wajib diisi");
+    return;
+  }
+
+  const data = {
+    tanggal: kTanggal.value,
+    satwa_id: kSatwa.value,
+    dokter_id: kDokter.value,
+    gejala_klinis: kGejala.value,
+    diagnosa: kDiagnosa.value,
+    pengobatan: kPengobatan.value
+  };
+
+  await fetch(API + "/kesehatan",{
     method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(data)
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify(data)
   });
 
   $("#kesehatanModal").modal("hide");
+
   loadKesehatan();
 }
 function loadKesehatan(){
@@ -829,27 +862,29 @@ async function saveObat(){
 }
 async function pakaiObat(id){
 
-  const jumlah = prompt("Jumlah obat digunakan:");
-  if(!jumlah) return;
+  const jumlah = parseInt(prompt("Jumlah obat digunakan:"));
+
+  if(!jumlah || jumlah <= 0){
+    alert("Jumlah tidak valid");
+    return;
+  }
+
+  const dataObat = obat.find(o => o.id == id);
+
+  if(jumlah > dataObat.sisa){
+    alert("Stok tidak cukup");
+    return;
+  }
+
   await fetch(API + "/obat/pakai/" + id,{
     method:"PUT",
     headers:{
       'Content-Type':'application/json'
     },
-    body:JSON.stringify({
-      jumlah
-    })
+    body:JSON.stringify({ jumlah })
   });
 
   loadObat();
-}
-async function hapusObat(id){
-  if(confirm("Hapus obat?")){
-    await fetch(API + "/obat/" + id,{
-      method:"DELETE"
-    });
-    loadObat();
-  }
 }
 async function loadSatwaOption(){
 
@@ -872,6 +907,17 @@ async function loadDokterOption(){
       ${d.nama}
     </option>
   `).join("");
+}
+  async function hapusObat(id){
+
+  if(confirm("Hapus obat?")){
+
+    await fetch(API + "/obat/" + id,{
+      method:"DELETE"
+    });
+
+    loadObat();
+  }
 }
 </script>
 
