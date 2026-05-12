@@ -88,6 +88,9 @@
 <button class="btn btn-dark btn-block text-left" onclick="showPage('dokter')">
   <i class="fas fa-user-md"></i> Data Dokter Hewan
 </button>
+  <button class="btn btn-dark btn-block text-left" onclick="showPage('obat')">
+  <i class="fas fa-capsules"></i> Stok Obat
+</button>
 <button class="btn btn-dark btn-block text-left" onclick="showPage('kesehatan')">
   <i class="fas fa-notes-medical"></i> Resume Medis
 </button>
@@ -200,7 +203,34 @@
 <tbody id="kesehatanTable"></tbody>
 </table>
 </div>
+  // ===== OBAT =====
+  <div id="page-obat" style="display:none">
 
+<h3>
+  Stok Obat
+  <button class="btn btn-primary btn-sm" onclick="openObat()">
+    Tambah
+  </button>
+</h3>
+
+<table class="table table-bordered">
+<thead>
+<tr>
+  <th>No</th>
+  <th>Bentuk</th>
+  <th>Nama Obat</th>
+  <th>Bahan</th>
+  <th>Jenis Obat</th>
+  <th>Stok Awal</th>
+  <th>Digunakan</th>
+  <th>Sisa</th>
+  <th>Aksi</th>
+</tr>
+</thead>
+<tbody id="obatTable"></tbody>
+</table>
+
+</div>
 
 <!-- MODAL -->
 <div class="modal fade" id="formModal">
@@ -277,7 +307,37 @@
 <textarea id="kGejala" class="form-control mb-2" placeholder="Gejala Klinis"></textarea>
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
+<div class="modal fade" id="obatModal">
+<div class="modal-dialog">
+<div class="modal-content">
 
+<div class="modal-header">
+  <h5>Stok Obat</h5>
+</div>
+
+<div class="modal-body">
+
+<input id="oBentuk" class="form-control mb-2" placeholder="Bentuk">
+
+<input id="oNama" class="form-control mb-2" placeholder="Nama Obat">
+
+<textarea id="oBahan" class="form-control mb-2" placeholder="Bahan"></textarea>
+
+<input id="oJenis" class="form-control mb-2" placeholder="Jenis Obat">
+
+<input id="oStok" type="number" class="form-control mb-2" placeholder="Stok Awal">
+
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-primary" onclick="saveObat()">
+Simpan
+</button>
+</div>
+
+</div>
+</div>
+</div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-primary" onclick="saveKesehatan()">Simpan</button>
@@ -655,6 +715,7 @@ function loadKesehatan(){
     });
 }
 
+  
 function cetakPDF(id){
  window.open(API + "/rekam/pdf/" + id);
 }
