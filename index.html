@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <meta charset="UTF-8">
 <title>SISTEM INFORMASI MANAJEMEN KESEHATAN SATWA (SIMAKES) DI UNIT POLSATWA DITSAMAPTA POLDA DIY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -262,7 +264,7 @@
 </div>
 </div>
 
-
+<div class="modal fade" id="obatModal">
 <div class="modal fade" id="dokterModal">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -307,7 +309,7 @@
 <textarea id="kGejala" class="form-control mb-2" placeholder="Gejala Klinis"></textarea>
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
-<div class="modal fade" id="obatModal">
+
 <div class="modal-dialog">
 <div class="modal-content">
 
@@ -362,17 +364,22 @@ function showPage(p){
   document.getElementById('page-dokter').style.display='none';
   document.getElementById('page-obat').style.display='none';
   document.getElementById('page-kesehatan').style.display='none';
+
   document.getElementById('page-'+p).style.display='block';
 
-  if(p === 'dokter') loadDokter();
+  if(p === 'dokter'){
+    loadDokter();
+  }
+
   if(p === 'kesehatan'){
     loadKesehatan();
     loadSatwaOption();
     loadDokterOption();
   }
-}
+
   if(p === 'obat'){
-  loadObat();
+    loadObat();
+  }
 }
   document.getElementById('page-obat').style.display='none';
 
@@ -446,9 +453,10 @@ async function loadData(){
 }
 
 function render(){
-satwaBody.innerHTML="";
+  satwaBody.innerHTML="";
+
   satwa.forEach((r,i)=>{
-    satwaBody.innerHTML+=
+    satwaBody.innerHTML += `
     <tr>
       <td>${i+1}</td>
       <td>${r.nama_satwa}</td>
@@ -461,14 +469,20 @@ satwaBody.innerHTML="";
       <td>${r.nama_pemilik}</td>
       <td>${r.alamat_pemilik}</td>
       <td>
-        <button class="btn btn-warning btn-sm" onclick="openForm(${r.id})">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="hapus(${r.id})">Hapus</button>
+        <button class="btn btn-warning btn-sm"
+          onclick="openForm(${r.id})">
+          Edit
+        </button>
+
+        <button class="btn btn-danger btn-sm"
+          onclick="hapus(${r.id})">
+          Hapus
+        </button>
       </td>
     </tr>
-    ;
+    `;
   });
 }
-
 function openForm(id=null){
   editId=id;
   fNama.value=fJenis.value=fRas.value=fJK.value=fTglLahir.value=fKlasifikasi.value=fPemilik.value=fAlamat.value="";
@@ -585,8 +599,9 @@ async function loadDokter(){
 
 function renderDokter(){
   dokterBody.innerHTML = "";
+
   dokter.forEach((d,i)=>{
-    dokterBody.innerHTML += 
+    dokterBody.innerHTML += `
     <tr>
       <td>${i+1}</td>
       <td>${d.nama}</td>
@@ -595,10 +610,18 @@ function renderDokter(){
       <td>${d.jenis_kelamin}</td>
       <td>${d.nomor_strv}</td>
       <td>
-        <button class="btn btn-sm btn-warning" onclick="openDokter(${d.id})">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="hapusDokter(${d.id})">Hapus</button>
+        <button class="btn btn-warning btn-sm"
+          onclick="openDokter(${d.id})">
+          Edit
+        </button>
+
+        <button class="btn btn-danger btn-sm"
+          onclick="hapusDokter(${d.id})">
+          Hapus
+        </button>
       </td>
-    </tr>;
+    </tr>
+    `;
   });
 }
 
@@ -691,35 +714,74 @@ function loadKesehatan(){
     .then(res => res.json())
     .then(data => {
 
-      kesehatanTable.innerHTML = data.map((d, i) => 
+      kesehatanTable.innerHTML = data.map((d, i) => `
         <tr>
-          <td class="text-center font-weight-bold">${i + 1}</td>
+          <td>${i + 1}</td>
           <td>${d.nomor_rekam}</td>
           <td>${d.tanggal}</td>
           <td>${d.nama_satwa}</td>
           <td>${d.dokter}</td>
+          <td>${d.gejala_klinis}</td>
           <td>${d.diagnosa}</td>
           <td>${d.pengobatan}</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-danger"
+          <td>
+            <button class="btn btn-danger btn-sm"
               onclick="cetakPDF(${d.id})">
-              <i class="fa fa-file-pdf"></i> Cetak PDF
+              PDF
             </button>
           </td>
         </tr>
-      ).join("");
+      `).join("");
+
     })
-    .catch(err => {
-      console.error(err);
+    .catch(err=>{
+      console.log(err);
       alert("Gagal memuat data kesehatan");
     });
 }
+async function loadObat(){
 
-  
-function cetakPDF(id){
- window.open(API + "/rekam/pdf/" + id);
+  const res = await fetch(API + "/obat");
+  const data = await res.json();
+
+  obatTable.innerHTML = "";
+
+  data.forEach((o,i)=>{
+
+    const sisa = o.stok_awal - o.digunakan;
+
+    obatTable.innerHTML += `
+    <tr>
+      <td>${i+1}</td>
+      <td>${o.bentuk}</td>
+      <td>${o.nama_obat}</td>
+      <td>${o.bahan}</td>
+      <td>${o.jenis_obat}</td>
+      <td>${o.stok_awal}</td>
+      <td>${o.digunakan}</td>
+      <td>${sisa}</td>
+      <td>
+
+        <button class="btn btn-success btn-sm"
+          onclick="pakaiObat(${o.id})">
+          Pakai
+        </button>
+
+        <button class="btn btn-danger btn-sm"
+          onclick="hapusObat(${o.id})">
+          Hapus
+        </button>
+
+      </td>
+    </tr>
+    `;
+  });
+
 }
 let obat = [];
+function openObat(){
+
+  oBentuk.value = "";
   oNama.value = "";
   oBahan.value = "";
   oJenis.value = "";
@@ -727,6 +789,11 @@ let obat = [];
 
   $("#obatModal").modal("show");
 }
+  
+function cetakPDF(id){
+ window.open(API + "/rekam/pdf/" + id);
+}
+
 
 async function saveObat(){
 
@@ -775,18 +842,28 @@ async function hapusObat(id){
   }
 }
 async function loadSatwaOption(){
-  const res = await fetch(API+"/satwa");
-  const data = await res.json();
-  kSatwa.innerHTML = data.map(s=><option value="${s.id}">${s.nama_satwa}</option>).join("");
-}
 
-async function loadDokterOption(){
-  const res = await fetch(API+"/dokter");
+  const res = await fetch(API + "/satwa");
   const data = await res.json();
-  kDokter.innerHTML = data.map(d=><option value="${d.id}">${d.nama}</option>).join("");
+
+  kSatwa.innerHTML = data.map(s => `
+    <option value="${s.id}">
+      ${s.nama_satwa}
+    </option>
+  `).join("");
+}
+async function loadDokterOption(){
+
+  const res = await fetch(API + "/dokter");
+  const data = await res.json();
+
+  kDokter.innerHTML = data.map(d => `
+    <option value="${d.id}">
+      ${d.nama}
+    </option>
+  `).join("");
 }
 </script>
-
 
 </body>
 </html>
