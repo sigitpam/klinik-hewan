@@ -122,7 +122,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <!-- halaman dashboard & satwa kamu tetap di sini -->
 
 <!-- DASHBOARD -->
-<div id="page-dashboard">
+<div id="page-dashboard" class="page-content"
 <h3>Dashboard</h3>
 <p>Jumlah Data Satwa: <b id="statSatwa">0</b></p>
 <div class="row">
@@ -139,7 +139,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </div>
 
 <!-- DATA SATWA -->
-<div id="page-satwa" style="display:none">
+<div id="page-satwa" class="page-content" style="display:none">
 <h3>Data Satwa <button class="btn btn-primary btn-sm" onclick="openForm()">Tambah</button></h3>
 
 <table class="table table-bordered">
@@ -162,7 +162,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </table>
 
 </div>
-<div id="page-dokter" style="display:none">
+<div id="page-dokter" class="page-content" style="display:none">
 <h3>Data Dokter Hewan 
   <button class="btn btn-primary btn-sm" onclick="openDokter()">Tambah</button>
 </h3>
@@ -183,7 +183,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </table>
 </div>
 <!-- RESUME MEDIS -->
-<div id="page-kesehatan" style="display:none">
+<div id="page-kesehatan" class="page-content" style="display:none">
 <h3>
   Manajemen Kesehatan Satwa
   <button class="btn btn-primary btn-sm" onclick="openKesehatan()">Tambah</button>
@@ -207,7 +207,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </table>
 </div>
 <!-- OBAT -->
-  <div id="page-obat" style="display:none">
+<div id="page-obat" class="page-content" style="display:none">
 
 <h3>
   Stok Obat
@@ -366,37 +366,44 @@ let satwa=[];
 let editId=null;
 let chart=null;
 
-function showPage(p){
+function showPage(page){
 
   if(!checkSession()) return;
 
-  document.getElementById('page-dashboard').style.display='none';
-  document.getElementById('page-satwa').style.display='none';
-  document.getElementById('page-dokter').style.display='none';
-  document.getElementById('page-obat').style.display='none';
-  document.getElementById('page-kesehatan').style.display='none';
+  // sembunyikan semua halaman
+  document.querySelectorAll('.page-content')
+    .forEach(el => el.style.display='none');
 
-  document.getElementById('page-' + p).style.display='block';
+  // tampilkan halaman dipilih
+  document.getElementById('page-' + page)
+    .style.display='block';
 
-  if(p === 'dashboard'){
-    loadData();
+  // load data sesuai halaman
+  switch(page){
+
+    case 'dashboard':
+      loadData();
+      break;
+
+    case 'satwa':
+      loadData();
+      break;
+
+    case 'dokter':
+      loadDokter();
+      break;
+
+    case 'kesehatan':
+      loadKesehatan();
+      loadSatwaOption();
+      loadDokterOption();
+      break;
+
+    case 'obat':
+      loadObat();
+      break;
   }
-
-  if(p === 'dokter'){
-    loadDokter();
-  }
-
-  if(p === 'kesehatan'){
-    loadKesehatan();
-    loadSatwaOption();
-    loadDokterOption();
-  }
-
-  if(p === 'obat'){
-    loadObat();
-  }
-} 
-
+}
 async function doLogin(){
   const res = await fetch(API + '/login',{
     method:'POST',
