@@ -310,14 +310,6 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
 
-</div>
-<div class="modal-footer">
-<button class="btn btn-primary" onclick="saveKesehatan()">Simpan</button>
-</div>
-</div>
-</div>
-</div>
-
 <!-- MODAL OBAT -->
 <div class="modal fade" id="obatModal">
 
@@ -753,45 +745,6 @@ function loadKesehatan(){
       console.log(err);
       alert("Gagal memuat data kesehatan");
     });
-}
-async function loadObat(){
-
-  const res = await fetch(API + "/obat");
-  const data = await res.json();
-
-  obatTable.innerHTML = "";
-
-  data.forEach((o,i)=>{
-
-    const sisa = o.stok_awal - o.digunakan;
-
-    obatTable.innerHTML += `
-    <tr>
-      <td>${i+1}</td>
-      <td>${o.bentuk}</td>
-      <td>${o.nama_obat}</td>
-      <td>${o.bahan}</td>
-      <td>${o.jenis_obat}</td>
-      <td>${o.stok_awal}</td>
-      <td>${o.digunakan}</td>
-      <td>${sisa}</td>
-      <td>
-
-        <button class="btn btn-success btn-sm"
-          onclick="pakaiObat(${o.id})">
-          Pakai
-        </button>
-
-        <button class="btn btn-danger btn-sm"
-          onclick="hapusObat(${o.id})">
-          Hapus
-        </button>
-
-      </td>
-    </tr>
-    `;
-  });
-
 }
 let obat = [];
 function openObat(){
