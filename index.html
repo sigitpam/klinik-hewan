@@ -273,6 +273,7 @@
 <label>Dokter Hewan</label>
 <select id="kDokter" class="form-control mb-2"></select>
 
+<textarea id="kGejala" class="form-control mb-2" placeholder="Gejala Klinis"></textarea>
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
 
@@ -610,6 +611,7 @@ async function saveKesehatan(){
     tanggal: kTanggal.value,
     satwa_id: kSatwa.value,
     dokter_id: kDokter.value,
+    gejala_klinis: kGejala.value,
     diagnosa: kDiagnosa.value,
     pengobatan: kPengobatan.value
   };
