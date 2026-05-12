@@ -607,14 +607,14 @@ async function openKesehatan(){
 }
 
 async function saveKesehatan(){
-  const data = {
-    tanggal: kTanggal.value,
-    satwa_id: kSatwa.value,
-    dokter_id: kDokter.value,
-    gejala_klinis: kGejala.value,
-    diagnosa: kDiagnosa.value,
-    pengobatan: kPengobatan.value
-  };
+const data = {
+  tanggal: kTanggal.value,
+  satwa_id: kSatwa.value,
+  dokter_id: kDokter.value,
+  gejala_klinis: kGejala.value,
+  diagnosa: kDiagnosa.value,
+  pengobatan: kPengobatan.value
+};
 
   await fetch(API + "/kesehatan", {
     method:"POST",
