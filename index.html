@@ -1,260 +1,247 @@
+# SIMAKES FULL FIXED (SATU FILE)
+
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>SISTEM INFORMASI MANAJEMEN KESEHATAN SATWA (SIMAKES) DI UNIT POLSATWA DITSAMAPTA POLDA DIY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIMAKES</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-.login-page{height:100vh;display:flex;justify-content:center;align-items:center;background:#f4f6f9}
-.app-wrapper{display:none}
+.login-page{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#f4f6f9;
+}
+
+.app-wrapper{
+display:none;
+}
+
 #sidebar{
-  width:220px;
-  min-height:100vh;
-  background:#343a40;
-  transition: all 0.3s ease;
+width:220px;
+min-height:100vh;
+background:#343a40;
+transition:.3s;
 }
 
 #sidebar.hide{
-  width:0;
-  padding:0;
-  overflow:hidden;
+width:0;
+overflow:hidden;
 }
 
-#content{
-  flex:1;
-  transition: all 0.3s ease;
-}
 .sidebar-logo{
-  text-align:center;
-  padding:20px 10px;
-  border-bottom:1px solid rgba(255,255,255,0.15);
+text-align:center;
+padding:20px;
+border-bottom:1px solid rgba(255,255,255,.2);
 }
 
 .sidebar-logo img{
-  max-width:90px;
-  max-height:90px;
-  object-fit:contain;
+max-width:90px;
 }
-
 </style>
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body>
 
-<!-- LOGIN -->
 <div id="loginPage" class="login-page">
-  <div class="card" style="width:360px">
-    <div class="card-body">
-      <div class="text-center mb-3">
-      <img src="logo.png" style="height:80px">
-      </div>
-      <h4 class="text-center">SISTEM INFORMASI MANAJEMEN KESEHATAN SATWA (SIMAKES) DI UNIT POLSATWA DITSAMAPTA POLDA DIY</h4>
-      <input id="loginEmail" class="form-control mb-2" placeholder="Email">
-      <input id="loginPassword" type="password" class="form-control mb-3" placeholder="Password">
-      <button class="btn btn-primary btn-block" onclick="doLogin()">Login</button>
-    </div>
-  </div>
+<div class="card" style="width:350px">
+<div class="card-body">
+<div class="text-center mb-3">
+<img src="logo.png" height="80">
 </div>
 
-<!-- APP -->
-<div class="wrapper app-wrapper">
+<h4 class="text-center mb-3">SIMAKES</h4>
 
+<input id="loginEmail" class="form-control mb-2" placeholder="Email">
+<input id="loginPassword" type="password" class="form-control mb-3" placeholder="Password">
+
+<button class="btn btn-primary btn-block" onclick="doLogin()">Login</button>
+</div>
+</div>
+</div>
+
+<div class="wrapper app-wrapper">
 <div class="d-flex">
 
-<!-- SIDEBAR -->
- 
 <div id="sidebar" class="bg-dark text-white">
+<div class="sidebar-logo">
+<img src="logo.png">
+</div>
 
-  <div class="sidebar-logo">
-    <img src="logo.png" alt="Logo Polsatwa">
-  </div>
+<button class="btn btn-dark btn-block text-left" onclick="showPage('dashboard')">
+<i class="fas fa-home"></i> Dashboard
+</button>
 
-  <!-- LOGO + JUDUL -->
+<button class="btn btn-dark btn-block text-left" onclick="showPage('satwa')">
+<i class="fas fa-paw"></i> Data Satwa
+</button>
 
-
-  <!-- MENU -->
-  <button class="btn btn-dark btn-block text-left" onclick="showPage('dashboard')">
-    <i class="fas fa-home"></i> Dashboard
-  </button>
-
-  <button class="btn btn-dark btn-block text-left" onclick="showPage('satwa')">
-    <i class="fas fa-paw"></i> Data Satwa
-  </button>
 <button class="btn btn-dark btn-block text-left" onclick="showPage('dokter')">
-  <i class="fas fa-user-md"></i> Data Dokter Hewan
+<i class="fas fa-user-md"></i> Dokter
 </button>
-  <button class="btn btn-dark btn-block text-left" onclick="showPage('obat')">
-  <i class="fas fa-capsules"></i> Stok Obat
-</button>
+
 <button class="btn btn-dark btn-block text-left" onclick="showPage('kesehatan')">
-  <i class="fas fa-notes-medical"></i> Resume Medis
+<i class="fas fa-notes-medical"></i> Resume Medis
+</button>
+
+<button class="btn btn-dark btn-block text-left" onclick="showPage('obat')">
+<i class="fas fa-capsules"></i> Stok Obat
 </button>
 </div>
 
-<!-- KONTEN -->
 <div class="flex-fill">
 
-  <!-- TOP BAR -->
-<div class="bg-dark p-2 d-flex align-items-center shadow-sm">
+<div class="bg-dark text-white p-2 d-flex align-items-center">
+<button class="btn btn-dark" onclick="toggleMenu()">
+<i class="fas fa-bars"></i>
+</button>
 
-  <button class="btn btn-dark" onclick="toggleMenu()">
-    <i class="fas fa-bars text-white"></i>
-  </button>
+<b class="ml-2">SIMAKES</b>
 
-    <b>SISTEM INFORMASI MANAJEMEN KESEHATAN SATWA (SIMAKES)</b>
+<div class="ml-auto">
+<button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+</div>
+</div>
 
+<div class="p-4">
 
-    <div class="ml-auto">
-      <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
-    </div>
-
-  </div>
-
-  <!-- CONTENT -->
-  <div class="p-4">
-    <!-- halaman dashboard & satwa kamu tetap di sini -->
-
-<!-- DASHBOARD -->
 <div id="page-dashboard">
 <h3>Dashboard</h3>
-<p>Jumlah Data Satwa: <b id="statSatwa">0</b></p>
+<p>Total Satwa : <b id="statSatwa">0</b></p>
+
 <div class="row">
-  <div class="col-md-4">
-    <canvas id="chartSatwa"></canvas>
-  </div>
-  <div class="col-md-4">
-    <canvas id="chartDokter"></canvas>
-  </div>
-  <div class="col-md-4">
-    <canvas id="chartKesehatan"></canvas>
-  </div>
+<div class="col-md-4">
+<canvas id="chartSatwa"></canvas>
+</div>
+
+<div class="col-md-4">
+<canvas id="chartDokter"></canvas>
+</div>
+
+<div class="col-md-4">
+<canvas id="chartKesehatan"></canvas>
+</div>
 </div>
 </div>
 
-<!-- DATA SATWA -->
 <div id="page-satwa" style="display:none">
-<h3>Data Satwa <button class="btn btn-primary btn-sm" onclick="openForm()">Tambah</button></h3>
+<h3>
+Data Satwa
+<button class="btn btn-primary btn-sm" onclick="openForm()">Tambah</button>
+</h3>
 
 <table class="table table-bordered">
 <thead>
 <tr>
 <th>No</th>
-<th>Nama Satwa</th>
+<th>Nama</th>
 <th>Jenis</th>
 <th>Ras</th>
 <th>JK</th>
-<th>Tgl Lahir</th>
-<th>Umur</th>
-<th>Klasifikasi</th>
-<th>Pemilik</th>
-<th>Alamat</th>
 <th>Aksi</th>
 </tr>
 </thead>
 <tbody id="satwaBody"></tbody>
 </table>
-
 </div>
+
 <div id="page-dokter" style="display:none">
-<h3>Data Dokter Hewan 
-  <button class="btn btn-primary btn-sm" onclick="openDokter()">Tambah</button>
+<h3>
+Data Dokter
+<button class="btn btn-primary btn-sm" onclick="openDokter()">Tambah</button>
 </h3>
 
 <table class="table table-bordered">
+<thead>
 <tr>
 <th>No</th>
 <th>Nama</th>
-<th>Alamat</th>
 <th>Telepon</th>
-<th>Jenis Kelamin</th>
-<th>No STRV</th>
 <th>Aksi</th>
 </tr>
 </thead>
 <tbody id="dokterBody"></tbody>
 </table>
 </div>
-<!-- RESUME MEDIS -->
+
 <div id="page-kesehatan" style="display:none">
 <h3>
-  Manajemen Kesehatan Satwa
-  <button class="btn btn-primary btn-sm" onclick="openKesehatan()">Tambah</button>
+Resume Medis
+<button class="btn btn-primary btn-sm" onclick="openKesehatan()">Tambah</button>
 </h3>
 
 <table class="table table-bordered">
 <thead>
 <tr>
-  <th style="width:50px">No</th>
-  <th>No RM</th>
-  <th>Tanggal</th>
-  <th>Satwa</th>
-  <th>Dokter</th>
-  <th>Gejala Klinis</th>
-  <th>Diagnosa</th>
-  <th>Pengobatan</th>
-  <th>Aksi</th>
+<th>No</th>
+<th>No RM</th>
+<th>Tanggal</th>
+<th>Satwa</th>
+<th>Dokter</th>
+<th>Gejala Klinis</th>
+<th>Diagnosa</th>
+<th>Pengobatan</th>
 </tr>
 </thead>
 <tbody id="kesehatanTable"></tbody>
 </table>
 </div>
-  // ===== OBAT =====
-  <div id="page-obat" style="display:none">
 
+<div id="page-obat" style="display:none">
 <h3>
-  Stok Obat
-  <button class="btn btn-primary btn-sm" onclick="openObat()">
-    Tambah
-  </button>
+Stok Obat
+<button class="btn btn-primary btn-sm" onclick="openObat()">Tambah</button>
 </h3>
 
 <table class="table table-bordered">
 <thead>
 <tr>
-  <th>No</th>
-  <th>Bentuk</th>
-  <th>Nama Obat</th>
-  <th>Bahan</th>
-  <th>Jenis Obat</th>
-  <th>Stok Awal</th>
-  <th>Digunakan</th>
-  <th>Sisa</th>
-  <th>Aksi</th>
+<th>No</th>
+<th>Bentuk</th>
+<th>Nama</th>
+<th>Bahan</th>
+<th>Jenis</th>
+<th>Stok</th>
+<th>Digunakan</th>
+<th>Sisa</th>
+<th>Aksi</th>
 </tr>
 </thead>
 <tbody id="obatTable"></tbody>
 </table>
-
 </div>
 
-<!-- MODAL -->
+</div>
+</div>
+</div>
+</div>
+
 <div class="modal fade" id="formModal">
 <div class="modal-dialog">
 <div class="modal-content">
-<div class="modal-header"><h5>Data Satwa</h5></div>
+<div class="modal-header">
+<h5>Data Satwa</h5>
+</div>
+
 <div class="modal-body">
 <input id="fNama" class="form-control mb-2" placeholder="Nama Satwa">
 <input id="fJenis" class="form-control mb-2" placeholder="Jenis">
 <input id="fRas" class="form-control mb-2" placeholder="Ras">
 
-<select id="fJK" class="form-control mb-2">
-  <option value="">-- Jenis Kelamin --</option>
-  <option>Jantan</option>
-  <option>Betina</option>
+<select id="fJK" class="form-control">
+<option>Jantan</option>
+<option>Betina</option>
 </select>
-
-<label>Tanggal Lahir</label>
-<input id="fTglLahir" type="date" class="form-control mb-2">
-
-<input id="fKlasifikasi" class="form-control mb-2" placeholder="Klasifikasi">
-<input id="fPemilik" class="form-control mb-2" placeholder="Nama Pemilik">
-<textarea id="fAlamat" class="form-control" placeholder="Alamat Pemilik"></textarea>
 </div>
+
 <div class="modal-footer">
 <button class="btn btn-primary" onclick="saveData()">Simpan</button>
 </div>
@@ -262,26 +249,18 @@
 </div>
 </div>
 
-
 <div class="modal fade" id="dokterModal">
 <div class="modal-dialog">
 <div class="modal-content">
-<div class="modal-header"><h5>Data Dokter</h5></div>
-<div class="modal-body">
-
-<input id="dNama" class="form-control mb-2" placeholder="Nama Dokter">
-<textarea id="dAlamat" class="form-control mb-2" placeholder="Alamat"></textarea>
-<input id="dTelepon" class="form-control mb-2" placeholder="Telepon">
-
-<select id="dJK" class="form-control mb-2">
-  <option value="">-- Jenis Kelamin --</option>
-  <option>Laki-laki</option>
-  <option>Perempuan</option>
-</select>
-
-<input id="dStrv" class="form-control mb-2" placeholder="Nomor STRV">
-
+<div class="modal-header">
+<h5>Dokter</h5>
 </div>
+
+<div class="modal-body">
+<input id="dNama" class="form-control mb-2" placeholder="Nama">
+<input id="dTelepon" class="form-control" placeholder="Telepon">
+</div>
+
 <div class="modal-footer">
 <button class="btn btn-primary" onclick="saveDokter()">Simpan</button>
 </div>
@@ -292,55 +271,43 @@
 <div class="modal fade" id="kesehatanModal">
 <div class="modal-dialog">
 <div class="modal-content">
-<div class="modal-header"><h5>Manajemen Kesehatan</h5></div>
+<div class="modal-header">
+<h5>Resume Medis</h5>
+</div>
+
 <div class="modal-body">
-
-<label>Tanggal</label>
 <input type="date" id="kTanggal" class="form-control mb-2">
-
-<label>Nama Satwa</label>
 <select id="kSatwa" class="form-control mb-2"></select>
-
-<label>Dokter Hewan</label>
 <select id="kDokter" class="form-control mb-2"></select>
-
 <textarea id="kGejala" class="form-control mb-2" placeholder="Gejala Klinis"></textarea>
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-primary" onclick="saveKesehatan()">Simpan</button>
+</div>
+</div>
+</div>
+</div>
+
 <div class="modal fade" id="obatModal">
 <div class="modal-dialog">
 <div class="modal-content">
-
 <div class="modal-header">
-  <h5>Stok Obat</h5>
+<h5>Stok Obat</h5>
 </div>
 
 <div class="modal-body">
-
 <input id="oBentuk" class="form-control mb-2" placeholder="Bentuk">
-
 <input id="oNama" class="form-control mb-2" placeholder="Nama Obat">
-
 <textarea id="oBahan" class="form-control mb-2" placeholder="Bahan"></textarea>
-
-<input id="oJenis" class="form-control mb-2" placeholder="Jenis Obat">
-
-<input id="oStok" type="number" class="form-control mb-2" placeholder="Stok Awal">
-
+<input id="oJenis" class="form-control mb-2" placeholder="Jenis">
+<input id="oStok" type="number" class="form-control" placeholder="Stok Awal">
 </div>
 
 <div class="modal-footer">
-<button class="btn btn-primary" onclick="saveObat()">
-Simpan
-</button>
-</div>
-
-</div>
-</div>
-</div>
-</div>
-<div class="modal-footer">
-<button class="btn btn-primary" onclick="saveKesehatan()">Simpan</button>
+<button class="btn btn-primary" onclick="saveObat()">Simpan</button>
 </div>
 </div>
 </div>
@@ -350,411 +317,341 @@ Simpan
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function toggleMenu(){
-  document.getElementById("sidebar").classList.toggle("hide");
-}
 const API='https://klinik-hewan-production-f0f0.up.railway.app/api';
 
-let satwa=[];
-let editId=null;
-let chart=null;
-
-function showPage(p){
-  if(!checkSession()) return;
-
-  document.getElementById('page-dashboard').style.display='none';
-  document.getElementById('page-satwa').style.display='none';
-  document.getElementById('page-dokter').style.display='none';
-  document.getElementById('page-kesehatan').style.display='none';
-  document.getElementById('page-'+p).style.display='block';
-
-  if(p === 'dokter') loadDokter();
-  if(p === 'kesehatan'){
-    loadKesehatan();
-    loadSatwaOption();
-    loadDokterOption();
-  }
-}
-
-async function doLogin(){
-  const res = await fetch(API + '/login',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      email: loginEmail.value,
-      password: loginPassword.value
-    })
-  });
-
-  const data = await res.json();
-
-  if(res.ok){
-    // Simpan token saja sudah cukup untuk menandai login berhasil
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("login_time", Date.now());
-    localStorage.setItem("login_exp", 60 * 60 * 1000); 
-
-    // Langsung pindah tampilan
-    document.getElementById('loginPage').style.display='none';
-    document.querySelector('.app-wrapper').style.display='block';
-    loadData(); // Ambil data satwa setelah login
-  } else {
-    alert("Login Gagal: " + (data.msg || data.error || "Unknown error"));
-  }
-}
-function checkSession(){
-  const token = localStorage.getItem("token");
-  const loginTime = localStorage.getItem("login_time");
-  const exp = localStorage.getItem("login_exp");
-
-  if(!token || !loginTime || !exp){
-    logout();
-    return false;
-  }
-
-  const now = Date.now();
-
-  if(now - loginTime > exp){
-    alert("Session login telah habis (60 menit). Silakan login kembali.");
-    logout();
-    return false;
-  }
-
-  return true;
+function toggleMenu(){
+sidebar.classList.toggle('hide');
 }
 
 function logout(){
-  localStorage.clear();
-  location.reload();
+localStorage.clear();
+location.reload();
 }
 
+async function doLogin(){
+const res = await fetch(API + '/login',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+email:loginEmail.value,
+password:loginPassword.value
+})
+});
+
+const data = await res.json();
+
+if(res.ok){
+localStorage.setItem('token',data.token);
+loginPage.style.display='none';
+document.querySelector('.app-wrapper').style.display='block';
+loadData();
+}else{
+alert('Login gagal');
+}
+}
+
+function showPage(p){
+pageDashboard = document.getElementById('page-dashboard');
+pageSatwa = document.getElementById('page-satwa');
+pageDokter = document.getElementById('page-dokter');
+pageKesehatan = document.getElementById('page-kesehatan');
+pageObat = document.getElementById('page-obat');
+
+pageDashboard.style.display='none';
+pageSatwa.style.display='none';
+pageDokter.style.display='none';
+pageKesehatan.style.display='none';
+pageObat.style.display='none';
+
+document.getElementById('page-' + p).style.display='block';
+
+if(p==='dokter') loadDokter();
+if(p==='kesehatan') loadKesehatan();
+if(p==='obat') loadObat();
+}
 
 async function loadData(){
-  try{
-    const res = await fetch(API + '/satwa');
-    const data = await res.json();
-    satwa = data;
-    render();
-    statSatwa.innerText = satwa.length;
-    renderCharts();
+const res = await fetch(API + '/satwa');
+const data = await res.json();
 
-    loadKesehatan();   // ← WAJIB
+statSatwa.innerText = data.length;
 
-  }catch(err){
-    alert("Gagal ambil data satwa");
-  }
+satwaBody.innerHTML = data.map((s,i)=>`
+<tr>
+<td>${i+1}</td>
+<td>${s.nama_satwa}</td>
+<td>${s.jenis}</td>
+<td>${s.ras}</td>
+<td>${s.jenis_kelamin}</td>
+<td>
+<button class='btn btn-danger btn-sm' onclick='hapusSatwa(${s.id})'>Hapus</button>
+</td>
+</tr>
+`).join('');
 }
 
-function render(){
-satwaBody.innerHTML="";
-  satwa.forEach((r,i)=>{
-    satwaBody.innerHTML+=`
-    <tr>
-      <td>${i+1}</td>
-      <td>${r.nama_satwa}</td>
-      <td>${r.jenis}</td>
-      <td>${r.ras}</td>
-      <td>${r.jenis_kelamin}</td>
-      <td>${r.tanggal_lahir}</td>
-      <td>${r.umur} th</td>
-      <td>${r.klasifikasi}</td>
-      <td>${r.nama_pemilik}</td>
-      <td>${r.alamat_pemilik}</td>
-      <td>
-        <button class="btn btn-warning btn-sm" onclick="openForm(${r.id})">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="hapus(${r.id})">Hapus</button>
-      </td>
-    </tr>
-    `;
-  });
-}
-
-function openForm(id=null){
-  editId=id;
-  fNama.value=fJenis.value=fRas.value=fJK.value=fTglLahir.value=fKlasifikasi.value=fPemilik.value=fAlamat.value="";
-
-  if(id){
-    const r = satwa.find(x => String(x.id) === String(id));
-    if(!r){
-      alert("Data tidak ditemukan ID="+id);
-      return;
-      }
-    fNama.value=r.nama_satwa;
-    fJenis.value=r.jenis;
-    fRas.value=r.ras;
-    fJK.value=r.jenis_kelamin;
-    fTglLahir.value=r.tanggal_lahir;
-    fKlasifikasi.value=r.klasifikasi;
-    fPemilik.value=r.nama_pemilik;
-    fAlamat.value=r.alamat_pemilik;
-  }
-  $("#formModal").modal("show");
+function openForm(){
+$('#formModal').modal('show');
 }
 
 async function saveData(){
-  const data={
-    nama_satwa:fNama.value,
-    jenis:fJenis.value,
-    ras:fRas.value,
-    jenis_kelamin:fJK.value,
-    tanggal_lahir:fTglLahir.value,
-    klasifikasi:fKlasifikasi.value,
-    nama_pemilik:fPemilik.value,
-    alamat_pemilik:fAlamat.value
-  };
+await fetch(API + '/satwa',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+nama_satwa:fNama.value,
+jenis:fJenis.value,
+ras:fRas.value,
+jenis_kelamin:fJK.value
+})
+});
 
-  let url=API+"/satwa", method="POST";
-  if(editId){ url=API+"/satwa/"+editId; method="PUT"; }
-
-  await fetch(url,{
-    method,
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data)
-  });
-
-  $("#formModal").modal("hide");
-  editId=null;
-  loadData();
+$('#formModal').modal('hide');
+loadData();
 }
 
-async function hapus(id){
-  if(confirm('Hapus data?')){
-    await fetch(API+'/satwa/'+id,{method:'DELETE'});
-    loadData();
-  }
+async function hapusSatwa(id){
+await fetch(API + '/satwa/' + id,{method:'DELETE'});
+loadData();
 }
-
-let chartSatwa, chartDokter, chartKesehatan;
-
-async function renderCharts(){
-
-  const satwaRes = await fetch(API + "/satwa");
-  const satwa = await satwaRes.json();
-
-  const dokterRes = await fetch(API + "/stat/dokter");
-  const dokter = await dokterRes.json();
-
-  const kesRes = await fetch(API + "/stat/kesehatan");
-  const kesehatan = await kesRes.json();
-
-  // ===== SATWA =====
-  if(chartSatwa) chartSatwa.destroy();
-  chartSatwa = new Chart(document.getElementById("chartSatwa"),{
-    type:'bar',
-    data:{
-      labels:['Satwa'],
-      datasets:[{label:'Total', data:[satwa.length]}]
-    }
-  });
-
-  // ===== DOKTER =====
-  if(chartDokter) chartDokter.destroy();
-  chartDokter = new Chart(document.getElementById("chartDokter"),{
-    type:'bar',
-    data:{
-      labels:['Dokter'],
-      datasets:[{label:'Total', data:[dokter.total]}]
-    }
-  });
-
-  // ===== KESEHATAN =====
-  if(chartKesehatan) chartKesehatan.destroy();
-  chartKesehatan = new Chart(document.getElementById("chartKesehatan"),{
-    type:'bar',
-    data:{
-      labels:['Rekam Medis'],
-      datasets:[{label:'Total', data:[kesehatan.total]}]
-    }
-  });
-}
-
-if(localStorage.token){
-  loginPage.style.display='none';
-  document.querySelector('.app-wrapper').style.display='block';
-  loadData();
-}
-
-let dokter = [];
-let editDokterId = null;
 
 async function loadDokter(){
-  const res = await fetch(API + "/dokter");
-  dokter = await res.json();
-  renderDokter();
+const res = await fetch(API + '/dokter');
+const data = await res.json();
+
+ dokterBody.innerHTML = data.map((d,i)=>`
+<tr>
+<td>${i+1}</td>
+<td>${d.nama}</td>
+<td>${d.telepon}</td>
+<td>
+<button class='btn btn-danger btn-sm' onclick='hapusDokter(${d.id})'>Hapus</button>
+</td>
+</tr>
+`).join('');
 }
 
-function renderDokter(){
-  dokterBody.innerHTML = "";
-  dokter.forEach((d,i)=>{
-    dokterBody.innerHTML += `
-    <tr>
-      <td>${i+1}</td>
-      <td>${d.nama}</td>
-      <td>${d.alamat}</td>
-      <td>${d.telepon}</td>
-      <td>${d.jenis_kelamin}</td>
-      <td>${d.nomor_strv}</td>
-      <td>
-        <button class="btn btn-sm btn-warning" onclick="openDokter(${d.id})">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="hapusDokter(${d.id})">Hapus</button>
-      </td>
-    </tr>`;
-  });
-}
-
-function openDokter(id=null){
-  editDokterId=id;
-
-  dNama.value="";
-  dAlamat.value="";
-  dTelepon.value="";
-  dJK.value="";
-  dStrv.value="";
-
-  if(id){
-    const d=dokter.find(x=>x.id==id);
-    dNama.value=d.nama;
-    dAlamat.value=d.alamat;
-    dTelepon.value=d.telepon;
-    dJK.value=d.jenis_kelamin;
-    dStrv.value=d.nomor_strv;
-  }
-
-  $("#dokterModal").modal("show");
+function openDokter(){
+$('#dokterModal').modal('show');
 }
 
 async function saveDokter(){
-  const data={
-    nama:dNama.value,
-    alamat:dAlamat.value,
-    telepon:dTelepon.value,
-    jenis_kelamin:dJK.value,
-    nomor_strv:dStrv.value
-  };
+await fetch(API + '/dokter',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+nama:dNama.value,
+telepon:dTelepon.value
+})
+});
 
-  let url=API+"/dokter", method="POST";
-  if(editDokterId){
-    url=API+"/dokter/"+editDokterId;
-    method="PUT";
-  }
-
-  await fetch(url,{
-    method,
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data)
-  });
-
-  $("#dokterModal").modal("hide");
-  editDokterId=null;
-  loadDokter();
+$('#dokterModal').modal('hide');
+loadDokter();
 }
 
 async function hapusDokter(id){
-  if(confirm("Hapus dokter?")){
-    await fetch(API+"/dokter/"+id,{method:"DELETE"});
-    loadDokter();
-  }
+await fetch(API + '/dokter/' + id,{method:'DELETE'});
+loadDokter();
 }
 
-let kesehatan = [];
-
 async function openKesehatan(){
-  await loadSatwaOption();
-  await loadDokterOption();
-  kTanggal.value="";
-  kDiagnosa.value="";
-  kPengobatan.value="";
-  $("#kesehatanModal").modal("show");
+await loadSatwaOption();
+await loadDokterOption();
+$('#kesehatanModal').modal('show');
 }
 
 async function saveKesehatan(){
-const data = {
-  tanggal: kTanggal.value,
-  satwa_id: kSatwa.value,
-  dokter_id: kDokter.value,
-  gejala_klinis: kGejala.value,
-  diagnosa: kDiagnosa.value,
-  pengobatan: kPengobatan.value
-};
+await fetch(API + '/kesehatan',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+tanggal:kTanggal.value,
+satwa_id:kSatwa.value,
+dokter_id:kDokter.value,
+gejala_klinis:kGejala.value,
+diagnosa:kDiagnosa.value,
+pengobatan:kPengobatan.value
+})
+});
 
-  await fetch(API + "/kesehatan", {
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(data)
-  });
-
-  $("#kesehatanModal").modal("hide");
-  loadKesehatan();
-}
-function loadKesehatan(){
-  fetch(API + "/kesehatan")
-    .then(res => res.json())
-    .then(data => {
-
-      kesehatanTable.innerHTML = data.map((d, i) => `
-        <tr>
-          <td class="text-center font-weight-bold">${i + 1}</td>
-          <td>${d.nomor_rekam}</td>
-          <td>${d.tanggal}</td>
-          <td>${d.nama_satwa}</td>
-          <td>${d.dokter}</td>
-          <td>${d.diagnosa}</td>
-          <td>${d.pengobatan}</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-danger"
-              onclick="cetakPDF(${d.id})">
-              <i class="fa fa-file-pdf"></i> Cetak PDF
-            </button>
-          </td>
-        </tr>
-      `).join("");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Gagal memuat data kesehatan");
-    });
+$('#kesehatanModal').modal('hide');
+loadKesehatan();
 }
 
-  
-function cetakPDF(id){
- window.open(API + "/rekam/pdf/" + id);
+async function loadKesehatan(){
+const res = await fetch(API + '/kesehatan');
+const data = await res.json();
+
+kesehatanTable.innerHTML = data.map((d,i)=>`
+<tr>
+<td>${i+1}</td>
+<td>${d.nomor_rekam}</td>
+<td>${d.tanggal}</td>
+<td>${d.nama_satwa}</td>
+<td>${d.dokter}</td>
+<td>${d.gejala_klinis}</td>
+<td>${d.diagnosa}</td>
+<td>${d.pengobatan}</td>
+</tr>
+`).join('');
 }
 
-// function renderKesehatan(){
-//   kesehatanBody.innerHTML="";
-//   kesehatan.forEach((r,i)=>{
-//     kesehatanBody.innerHTML+=`
-//       <tr>
-//         <td>${i+1}</td>
-//         <td>
-//           <a target="_blank"
-//              href="http://localhost:3000/api/rekam/pdf/${r.id}"
-//              class="btn btn-sm btn-danger">
-//              <i class="fa fa-file-pdf"></i> PDF
-//           </a>
-//         </td>
-//         <td>${r.tanggal}</td>
-//         <td>${r.nama_satwa}</td>
-//         <td>${r.dokter}</td>
-//         <td>${r.diagnosa}</td>
-//         <td>${r.pengobatan}</td>
-//       </tr>
-//     `;
-//   });
-// }
 async function loadSatwaOption(){
-  const res = await fetch(API+"/satwa");
-  const data = await res.json();
-  kSatwa.innerHTML = data.map(s=>`<option value="${s.id}">${s.nama_satwa}</option>`).join("");
+const res = await fetch(API + '/satwa');
+const data = await res.json();
+
+kSatwa.innerHTML = data.map(s=>`
+<option value='${s.id}'>${s.nama_satwa}</option>
+`).join('');
 }
 
 async function loadDokterOption(){
-  const res = await fetch(API+"/dokter");
-  const data = await res.json();
-  kDokter.innerHTML = data.map(d=>`<option value="${d.id}">${d.nama}</option>`).join("");
+const res = await fetch(API + '/dokter');
+const data = await res.json();
+
+kDokter.innerHTML = data.map(d=>`
+<option value='${d.id}'>${d.nama}</option>
+`).join('');
+}
+
+function openObat(){
+oBentuk.value='';
+oNama.value='';
+oBahan.value='';
+oJenis.value='';
+oStok.value='';
+$('#obatModal').modal('show');
+}
+
+async function saveObat(){
+await fetch(API + '/obat',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+bentuk:oBentuk.value,
+nama_obat:oNama.value,
+bahan:oBahan.value,
+jenis_obat:oJenis.value,
+stok_awal:oStok.value
+})
+});
+
+$('#obatModal').modal('hide');
+loadObat();
+}
+
+async function loadObat(){
+const res = await fetch(API + '/obat');
+const data = await res.json();
+
+obatTable.innerHTML = data.map((o,i)=>`
+<tr>
+<td>${i+1}</td>
+<td>${o.bentuk}</td>
+<td>${o.nama_obat}</td>
+<td>${o.bahan}</td>
+<td>${o.jenis_obat}</td>
+<td>${o.stok_awal}</td>
+<td>${o.digunakan}</td>
+<td>${o.sisa}</td>
+<td>
+<button class='btn btn-success btn-sm' onclick='pakaiObat(${o.id})'>Pakai</button>
+<button class='btn btn-danger btn-sm' onclick='hapusObat(${o.id})'>Hapus</button>
+</td>
+</tr>
+`).join('');
+}
+
+async function pakaiObat(id){
+const jumlah = prompt('Jumlah digunakan');
+if(!jumlah) return;
+
+await fetch(API + '/obat/pakai/' + id,{
+method:'PUT',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({jumlah})
+});
+
+loadObat();
+}
+
+async function hapusObat(id){
+await fetch(API + '/obat/' + id,{method:'DELETE'});
+loadObat();
+}
+
+if(localStorage.token){
+loginPage.style.display='none';
+document.querySelector('.app-wrapper').style.display='block';
+loadData();
+}
+
+// CHART DASHBOARD
+let chartSatwa;
+let chartDokter;
+let chartKesehatan;
+
+async function renderCharts(){
+
+const satwaRes = await fetch(API + '/satwa');
+const satwa = await satwaRes.json();
+
+const dokterRes = await fetch(API + '/stat/dokter');
+const dokter = await dokterRes.json();
+
+const kesehatanRes = await fetch(API + '/stat/kesehatan');
+const kesehatan = await kesehatanRes.json();
+
+if(chartSatwa) chartSatwa.destroy();
+chartSatwa = new Chart(document.getElementById('chartSatwa'),{
+  type:'bar',
+  data:{
+    labels:['Satwa'],
+    datasets:[{
+      label:'Total',
+      data:[satwa.length]
+    }]
+  }
+});
+
+if(chartDokter) chartDokter.destroy();
+chartDokter = new Chart(document.getElementById('chartDokter'),{
+  type:'bar',
+  data:{
+    labels:['Dokter'],
+    datasets:[{
+      label:'Total',
+      data:[dokter.total || 0]
+    }]
+  }
+});
+
+if(chartKesehatan) chartKesehatan.destroy();
+chartKesehatan = new Chart(document.getElementById('chartKesehatan'),{
+  type:'bar',
+  data:{
+    labels:['Resume Medis'],
+    datasets:[{
+      label:'Total',
+      data:[kesehatan.total || 0]
+    }]
+  }
+});
+}
+
+// AUTO LOAD DASHBOARD
+window.onload = function(){
+  if(localStorage.token){
+    renderCharts();
+    showPage('dashboard');
+  }
 }
 </script>
 
+</body>
+</html>
+</script>
 
 </body>
 </html>
+```
