@@ -409,6 +409,7 @@ app.get("/api/kesehatan", async(req,res)=>{
       TO_CHAR(k.tanggal,'DD-MM-YYYY') AS tanggal,
       s.nama_satwa,
       d.nama AS dokter,
+      k.gejala_klinis,
       k.diagnosa,
       k.pengobatan
       FROM kesehatan k
@@ -430,38 +431,40 @@ app.get("/api/kesehatan", async(req,res)=>{
 // POST
 app.post("/api/kesehatan", async(req,res)=>{
 
-  const {
-    tanggal,
-    satwa_id,
-    dokter_id,
-    diagnosa,
-    pengobatan
-  } = req.body;
+ const {
+  tanggal,
+  satwa_id,
+  dokter_id,
+  gejala_klinis,
+  diagnosa,
+  pengobatan
+} = req.body;
 
   try{
 
     const nomor = "RM-" + Date.now();
 
     const result = await db.query(`
-      INSERT INTO kesehatan
-      (
-        nomor_rekam,
-        tanggal,
-        satwa_id,
-        dokter_id,
-        diagnosa,
-        pengobatan
-      )
-      VALUES($1,$2,$3,$4,$5,$6)
+INSERT INTO kesehatan
+(
+  nomor_rekam,
+  tanggal,
+  satwa_id,
+  dokter_id,
+  diagnosa,
+  pengobatan
+)
+VALUES($1,$2,$3,$4,$5,$6)
       RETURNING *
     `,[
-      nomor,
-      tanggal,
-      satwa_id,
-      dokter_id,
-      diagnosa,
-      pengobatan
-    ]);
+  nomor,
+  tanggal,
+  satwa_id,
+  dokter_id,
+  gejala_klinis,
+  diagnosa,
+  pengobatan
+]);
 
     res.json(result.rows[0]);
 
