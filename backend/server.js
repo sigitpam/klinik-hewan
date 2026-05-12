@@ -479,6 +479,73 @@ app.post("/api/kesehatan", async(req,res)=>{
   }
 });
 // =====================================
+// STOK OBAT
+// =====================================
+
+// GET
+app.get("/api/obat", async(req,res)=>{
+
+  try{
+
+    const result = await db.query(`
+      SELECT *
+      FROM stok_obat
+      ORDER BY id DESC
+    `);
+
+    res.json(result.rows);
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      error:err.message
+    });
+  }
+});
+
+// POST
+app.post("/api/obat", async(req,res)=>{
+
+  try{
+
+    const {
+      bentuk,
+      nama_obat,
+      bahan,
+      jenis_obat,
+      stok_awal
+    } = req.body;
+
+    const result = await db.query(`
+      INSERT INTO stok_obat
+      (
+        bentuk,
+        nama_obat,
+        bahan,
+        jenis_obat,
+        stok_awal,
+        digunakan,
+        sisa
+      )
+      VALUES($1,$2,$3,$4,$5,0,$5)
+      RETURNING *
+    `,[
+      bentuk,
+      nama_obat,
+      bahan,
+      jenis_obat,
+      stok_awal
+    ]);
+
+    res.json(result.rows[0]);
+
+  }catch(err){
+
+    console.error(err);
+});
+// =====================================
 // STATISTIK
 // =====================================
 
