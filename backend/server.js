@@ -11,19 +11,20 @@ const app = express();
 // =====================================
 // CONFIG
 // =====================================
+
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
+
 // =====================================
 // MIDDLEWARE
 // =====================================
 
 app.use(cors({
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
 }));
 
-// HANDLE PREFLIGHT
 app.options("*", cors());
 
 app.use(express.json());
@@ -31,24 +32,28 @@ app.use(express.json());
 // =====================================
 // DATABASE
 // =====================================
+
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
+  ssl:{
+    rejectUnauthorized:false
   }
 });
 
 // =====================================
 // ROOT
 // =====================================
+
 app.get("/", (req,res)=>{
-  res.status(200).send("✅ Backend SIMAKES Running");
+  res.send("✅ Backend SIMAKES Running");
 });
 
 // =====================================
 // LOGIN
 // =====================================
-app.post("/api/login", async (req,res)=>{
+
+app.post("/api/login", async(req,res)=>{
+
   const { email, password } = req.body;
 
   try{
@@ -94,7 +99,9 @@ app.post("/api/login", async (req,res)=>{
     });
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
@@ -105,8 +112,8 @@ app.post("/api/login", async (req,res)=>{
 // SATWA
 // =====================================
 
-// GET
 app.get("/api/satwa", async(req,res)=>{
+
   try{
 
     const result = await db.query(`
@@ -128,14 +135,15 @@ app.get("/api/satwa", async(req,res)=>{
     res.json(result.rows);
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// POST
 app.post("/api/satwa", async(req,res)=>{
 
   const {
@@ -179,14 +187,15 @@ app.post("/api/satwa", async(req,res)=>{
     res.json(result.rows[0]);
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// PUT
 app.put("/api/satwa/:id", async(req,res)=>{
 
   const { id } = req.params;
@@ -233,14 +242,15 @@ app.put("/api/satwa/:id", async(req,res)=>{
     });
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// DELETE
 app.delete("/api/satwa/:id", async(req,res)=>{
 
   try{
@@ -255,7 +265,9 @@ app.delete("/api/satwa/:id", async(req,res)=>{
     });
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
@@ -266,8 +278,8 @@ app.delete("/api/satwa/:id", async(req,res)=>{
 // DOKTER
 // =====================================
 
-// GET
 app.get("/api/dokter", async(req,res)=>{
+
   try{
 
     const result = await db.query(
@@ -277,14 +289,15 @@ app.get("/api/dokter", async(req,res)=>{
     res.json(result.rows);
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// POST
 app.post("/api/dokter", async(req,res)=>{
 
   const {
@@ -319,14 +332,15 @@ app.post("/api/dokter", async(req,res)=>{
     res.json(result.rows[0]);
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// PUT
 app.put("/api/dokter/:id", async(req,res)=>{
 
   const { id } = req.params;
@@ -364,14 +378,15 @@ app.put("/api/dokter/:id", async(req,res)=>{
     });
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// DELETE
 app.delete("/api/dokter/:id", async(req,res)=>{
 
   try{
@@ -386,7 +401,9 @@ app.delete("/api/dokter/:id", async(req,res)=>{
     });
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
@@ -397,7 +414,6 @@ app.delete("/api/dokter/:id", async(req,res)=>{
 // KESEHATAN
 // =====================================
 
-// GET
 app.get("/api/kesehatan", async(req,res)=>{
 
   try{
@@ -421,14 +437,15 @@ app.get("/api/kesehatan", async(req,res)=>{
     res.json(result.rows);
 
   }catch(err){
+
     console.error(err);
+
     res.status(500).json({
       error:err.message
     });
   }
 });
 
-// POST
 app.post("/api/kesehatan", async(req,res)=>{
 
   try{
@@ -471,18 +488,18 @@ app.post("/api/kesehatan", async(req,res)=>{
 
   }catch(err){
 
-    console.error("ERROR SIMPAN:", err);
+    console.error(err);
 
     res.status(500).json({
-      error: err.message
+      error:err.message
     });
   }
 });
+
 // =====================================
-// STOK OBAT
+// OBAT
 // =====================================
 
-// GET
 app.get("/api/obat", async(req,res)=>{
 
   try{
@@ -505,7 +522,6 @@ app.get("/api/obat", async(req,res)=>{
   }
 });
 
-// POST
 app.post("/api/obat", async(req,res)=>{
 
   try{
@@ -544,12 +560,73 @@ app.post("/api/obat", async(req,res)=>{
   }catch(err){
 
     console.error(err);
+
+    res.status(500).json({
+      error:err.message
+    });
+  }
 });
+
+app.put("/api/obat/pakai/:id", async(req,res)=>{
+
+  try{
+
+    const { jumlah } = req.body;
+
+    await db.query(`
+      UPDATE stok_obat
+      SET
+      digunakan = digunakan + $1,
+      sisa = sisa - $1
+      WHERE id = $2
+    `,[
+      jumlah,
+      req.params.id
+    ]);
+
+    res.json({
+      success:true
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      error:err.message
+    });
+  }
+});
+
+app.delete("/api/obat/:id", async(req,res)=>{
+
+  try{
+
+    await db.query(
+      "DELETE FROM stok_obat WHERE id=$1",
+      [req.params.id]
+    );
+
+    res.json({
+      success:true
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    res.status(500).json({
+      error:err.message
+    });
+  }
+});
+
 // =====================================
 // STATISTIK
 // =====================================
 
 app.get("/api/stat/dokter", async(req,res)=>{
+
   try{
 
     const result = await db.query(
@@ -557,10 +634,11 @@ app.get("/api/stat/dokter", async(req,res)=>{
     );
 
     res.json({
-      total: result.rows[0].total
+      total:result.rows[0].total
     });
 
   }catch(err){
+
     res.status(500).json({
       error:err.message
     });
@@ -568,6 +646,7 @@ app.get("/api/stat/dokter", async(req,res)=>{
 });
 
 app.get("/api/stat/kesehatan", async(req,res)=>{
+
   try{
 
     const result = await db.query(
@@ -575,23 +654,28 @@ app.get("/api/stat/kesehatan", async(req,res)=>{
     );
 
     res.json({
-      total: result.rows[0].total
+      total:result.rows[0].total
     });
 
   }catch(err){
+
     res.status(500).json({
       error:err.message
     });
   }
 });
+
 // =====================================
 // TEST DB
 // =====================================
+
 app.get("/api/test-db", async(req,res)=>{
 
   try{
 
-    const result = await db.query("SELECT NOW()");
+    const result = await db.query(
+      "SELECT NOW()"
+    );
 
     res.json({
       success:true,
@@ -607,9 +691,11 @@ app.get("/api/test-db", async(req,res)=>{
     });
   }
 });
+
 // =====================================
 // START SERVER
 // =====================================
+
 async function startServer(){
 
   try{
