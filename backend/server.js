@@ -431,16 +431,16 @@ app.get("/api/kesehatan", async(req,res)=>{
 // POST
 app.post("/api/kesehatan", async(req,res)=>{
 
-  const {
-    tanggal,
-    satwa_id,
-    dokter_id,
-    gejala_klinis,
-    diagnosa,
-    pengobatan
-  } = req.body;
-
   try{
+
+    const {
+      tanggal,
+      satwa_id,
+      dokter_id,
+      gejala_klinis,
+      diagnosa,
+      pengobatan
+    } = req.body;
 
     const nomor = "RM-" + Date.now();
 
@@ -470,14 +470,14 @@ app.post("/api/kesehatan", async(req,res)=>{
     res.json(result.rows[0]);
 
   }catch(err){
-    console.error("ERROR SAVE KESEHATAN:", err);
+
+    console.error("ERROR SIMPAN:", err);
 
     res.status(500).json({
-      error:err.message
+      error: err.message
     });
   }
 });
-
 // =====================================
 // STATISTIK
 // =====================================
