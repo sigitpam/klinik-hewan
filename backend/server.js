@@ -431,45 +431,47 @@ app.get("/api/kesehatan", async(req,res)=>{
 // POST
 app.post("/api/kesehatan", async(req,res)=>{
 
- const {
-  tanggal,
-  satwa_id,
-  dokter_id,
-  gejala_klinis,
-  diagnosa,
-  pengobatan
-} = req.body;
+  const {
+    tanggal,
+    satwa_id,
+    dokter_id,
+    gejala_klinis,
+    diagnosa,
+    pengobatan
+  } = req.body;
 
   try{
 
     const nomor = "RM-" + Date.now();
 
     const result = await db.query(`
-INSERT INTO kesehatan
-(
-  nomor_rekam,
-  tanggal,
-  satwa_id,
-  dokter_id,
-  diagnosa,
-  pengobatan
-)
-VALUES($1,$2,$3,$4,$5,$6)
+      INSERT INTO kesehatan
+      (
+        nomor_rekam,
+        tanggal,
+        satwa_id,
+        dokter_id,
+        gejala_klinis,
+        diagnosa,
+        pengobatan
+      )
+      VALUES($1,$2,$3,$4,$5,$6,$7)
       RETURNING *
     `,[
-  nomor,
-  tanggal,
-  satwa_id,
-  dokter_id,
-  gejala_klinis,
-  diagnosa,
-  pengobatan
-]);
+      nomor,
+      tanggal,
+      satwa_id,
+      dokter_id,
+      gejala_klinis,
+      diagnosa,
+      pengobatan
+    ]);
 
     res.json(result.rows[0]);
 
   }catch(err){
-    console.error(err);
+    console.error("ERROR SAVE KESEHATAN:", err);
+
     res.status(500).json({
       error:err.message
     });
