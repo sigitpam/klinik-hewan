@@ -264,7 +264,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </div>
 </div>
 
-<div class="modal fade" id="obatModal">
+
 <div class="modal fade" id="dokterModal">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -309,6 +309,17 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <textarea id="kGejala" class="form-control mb-2" placeholder="Gejala Klinis"></textarea>
 <textarea id="kDiagnosa" class="form-control mb-2" placeholder="Diagnosa"></textarea>
 <textarea id="kPengobatan" class="form-control" placeholder="Pengobatan"></textarea>
+
+</div>
+<div class="modal-footer">
+<button class="btn btn-primary" onclick="saveKesehatan()">Simpan</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- MODAL OBAT -->
+<div class="modal fade" id="obatModal">
 
 <div class="modal-dialog">
 <div class="modal-content">
@@ -357,16 +368,20 @@ let editId=null;
 let chart=null;
 
 function showPage(p){
+
   if(!checkSession()) return;
 
+  // sembunyikan semua halaman
   document.getElementById('page-dashboard').style.display='none';
   document.getElementById('page-satwa').style.display='none';
   document.getElementById('page-dokter').style.display='none';
   document.getElementById('page-obat').style.display='none';
   document.getElementById('page-kesehatan').style.display='none';
 
-  document.getElementById('page-'+p).style.display='block';
+  // tampilkan halaman dipilih
+  document.getElementById('page-' + p).style.display='block';
 
+  // load data sesuai halaman
   if(p === 'dokter'){
     loadDokter();
   }
@@ -789,7 +804,49 @@ function openObat(){
 
   $("#obatModal").modal("show");
 }
-  
+
+async function loadObat(){
+
+  try{
+
+    const res = await fetch(API + "/obat");
+    obat = await res.json();
+
+    obatTable.innerHTML = "";
+
+    obat.forEach((o,i)=>{
+
+      obatTable.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${o.bentuk}</td>
+        <td>${o.nama_obat}</td>
+        <td>${o.bahan}</td>
+        <td>${o.jenis_obat}</td>
+        <td>${o.stok_awal}</td>
+        <td>${o.digunakan}</td>
+        <td>${o.sisa}</td>
+        <td>
+          <button class="btn btn-warning btn-sm"
+            onclick="pakaiObat(${o.id})">
+            Pakai
+          </button>
+
+          <button class="btn btn-danger btn-sm"
+            onclick="hapusObat(${o.id})">
+            Hapus
+          </button>
+        </td>
+      </tr>
+      `;
+    });
+
+  }catch(err){
+
+    console.error(err);
+    alert("Gagal load obat");
+  }
+}
 function cetakPDF(id){
  window.open(API + "/rekam/pdf/" + id);
 }
