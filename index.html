@@ -122,7 +122,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <!-- halaman dashboard & satwa kamu tetap di sini -->
 
 <!-- DASHBOARD -->
-<div id="page-dashboard" class="page-content"
+<div id="page-dashboard" class="page-content">
 <h3>Dashboard</h3>
 <p>Jumlah Data Satwa: <b id="statSatwa">0</b></p>
 <div class="row">
@@ -651,26 +651,30 @@ function renderDokter(){
 }
 
 function openDokter(id=null){
-  editDokterId=id;
 
-  dNama.value="";
-  dAlamat.value="";
-  dTelepon.value="";
-  dJK.value="";
-  dStrv.value="";
+  editDokterId = id;
+
+  document.getElementById("dNama").value = "";
+  document.getElementById("dAlamat").value = "";
+  document.getElementById("dTelepon").value = "";
+  document.getElementById("dJK").value = "";
+  document.getElementById("dStrv").value = "";
 
   if(id){
-    const d=dokter.find(x=>x.id==id);
-    dNama.value=d.nama;
-    dAlamat.value=d.alamat;
-    dTelepon.value=d.telepon;
-    dJK.value=d.jenis_kelamin;
-    dStrv.value=d.nomor_strv;
+
+    const d = dokter.find(x => x.id == id);
+
+    if(d){
+      document.getElementById("dNama").value = d.nama;
+      document.getElementById("dAlamat").value = d.alamat;
+      document.getElementById("dTelepon").value = d.telepon;
+      document.getElementById("dJK").value = d.jenis_kelamin;
+      document.getElementById("dStrv").value = d.nomor_strv;
+    }
   }
 
-  $("#dokterModal").modal("show");
+  $('#dokterModal').modal('show');
 }
-
 async function saveDokter(){
   const data={
     nama:dNama.value,
