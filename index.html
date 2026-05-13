@@ -129,7 +129,6 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     </p>
 
     <div class="row">
-
       <div class="col-md-4">
         <canvas id="chartSatwa"></canvas>
       </div>
@@ -141,25 +140,23 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
       <div class="col-md-4">
         <canvas id="chartKesehatan"></canvas>
       </div>
-
     </div>
   </div>
 
   <!-- DATA SATWA -->
   <div id="page-satwa" class="page-content" style="display:none">
 
-    <h3>
-      Data Satwa
+    <div class="d-flex justify-content-between mb-3">
+      <h3>Data Satwa</h3>
 
       <button class="btn btn-primary btn-sm"
         onclick="openForm()">
         Tambah
       </button>
-    </h3>
+    </div>
 
-    <table class="table table-bordered">
-
-      <thead>
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
         <tr>
           <th>No</th>
           <th>Nama Satwa</th>
@@ -176,7 +173,6 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
       </thead>
 
       <tbody id="satwaBody"></tbody>
-
     </table>
 
   </div>
@@ -186,18 +182,18 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
        class="page-content"
        style="display:none">
 
-    <h3>
-      Data Dokter Hewan
+    <div class="d-flex justify-content-between mb-3">
+      <h3>Data Dokter Hewan</h3>
 
       <button class="btn btn-primary btn-sm"
         onclick="openDokter()">
         Tambah
       </button>
-    </h3>
+    </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
 
-      <thead>
+      <thead class="thead-dark">
         <tr>
           <th>No</th>
           <th>Nama</th>
@@ -220,18 +216,18 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
        class="page-content"
        style="display:none">
 
-    <h3>
-      Manajemen Kesehatan Satwa
+    <div class="d-flex justify-content-between mb-3">
+      <h3>Manajemen Kesehatan Satwa</h3>
 
       <button class="btn btn-primary btn-sm"
         onclick="openKesehatan()">
         Tambah
       </button>
-    </h3>
+    </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
 
-      <thead>
+      <thead class="thead-dark">
         <tr>
           <th>No</th>
           <th>No RM</th>
@@ -256,18 +252,18 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
        class="page-content"
        style="display:none">
 
-    <h3>
-      Stok Obat
+    <div class="d-flex justify-content-between mb-3">
+      <h3>Stok Obat</h3>
 
       <button class="btn btn-primary btn-sm"
         onclick="openObat()">
         Tambah
       </button>
-    </h3>
+    </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
 
-      <thead>
+      <thead class="thead-dark">
         <tr>
           <th>No</th>
           <th>Bentuk</th>
@@ -288,84 +284,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   </div>
 
 </div>
-<!-- END p-4 -->
-
-
-
-<!-- =========================
-     MODAL DATA SATWA
-========================= -->
-
-<div class="modal fade"
-     id="formModal"
-     tabindex="-1">
-
-  <div class="modal-dialog modal-dialog-centered">
-
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5>Data Satwa</h5>
-      </div>
-
-      <div class="modal-body">
-
-        <input id="fNama"
-               class="form-control mb-2"
-               placeholder="Nama Satwa">
-
-        <input id="fJenis"
-               class="form-control mb-2"
-               placeholder="Jenis">
-
-        <input id="fRas"
-               class="form-control mb-2"
-               placeholder="Ras">
-
-        <select id="fJK"
-                class="form-control mb-2">
-
-          <option value="">
-            -- Jenis Kelamin --
-          </option>
-
-          <option>Jantan</option>
-          <option>Betina</option>
-
-        </select>
-
-        <label>Tanggal Lahir</label>
-
-        <input id="fTglLahir"
-               type="date"
-               class="form-control mb-2">
-
-        <input id="fKlasifikasi"
-               class="form-control mb-2"
-               placeholder="Klasifikasi">
-
-        <input id="fPemilik"
-               class="form-control mb-2"
-               placeholder="Nama Pemilik">
-
-        <textarea id="fAlamat"
-                  class="form-control"
-                  placeholder="Alamat Pemilik"></textarea>
-
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-primary"
-          onclick="saveData()">
-          Simpan
-        </button>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
+<!-- END CONTENT -->
 
 
 
@@ -375,14 +294,28 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
 <div class="modal fade"
      id="dokterModal"
-     tabindex="-1">
+     tabindex="-1"
+     role="dialog">
 
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered"
+       role="document">
 
     <div class="modal-content">
 
-      <div class="modal-header">
-        <h5>Data Dokter</h5>
+      <div class="modal-header bg-primary text-white">
+
+        <h5 class="modal-title">
+          Data Dokter Hewan
+        </h5>
+
+        <button type="button"
+                class="close text-white"
+                data-dismiss="modal">
+
+          <span>&times;</span>
+
+        </button>
+
       </div>
 
       <div class="modal-body">
@@ -419,8 +352,13 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
       <div class="modal-footer">
 
+        <button class="btn btn-secondary"
+                data-dismiss="modal">
+          Batal
+        </button>
+
         <button class="btn btn-primary"
-          onclick="saveDokter()">
+                onclick="saveDokter()">
           Simpan
         </button>
 
@@ -495,7 +433,17 @@ Simpan
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+<script>
+$(document).ready(function(){
 
+  $('#dokterModal').on('shown.bs.modal', function () {
+    $('#dNama').trigger('focus');
+  });
+
+});
+</script>
+  
 <script>
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("hide");
@@ -789,34 +737,38 @@ function renderDokter(){
     `;
   });
 }
-function openDokter(id=null){
+function openDokter(id = null){
 
   editDokterId = id;
 
-  document.getElementById("dNama").value = "";
-  document.getElementById("dAlamat").value = "";
-  document.getElementById("dTelepon").value = "";
-  document.getElementById("dJK").value = "";
-  document.getElementById("dStrv").value = "";
+  dNama.value = "";
+  dAlamat.value = "";
+  dTelepon.value = "";
+  dJK.value = "";
+  dStrv.value = "";
 
   if(id){
 
-    const d = dokter.find(x => String(x.id) === String(id));
+    const d = dokter.find(x => x.id == id);
 
-    if(!d){
-      alert("Data tidak ditemukan ID=" + id);
-      return;
+    if(d){
+      dNama.value = d.nama;
+      dAlamat.value = d.alamat;
+      dTelepon.value = d.telepon;
+      dJK.value = d.jenis_kelamin;
+      dStrv.value = d.nomor_strv;
     }
 
-    document.getElementById("dNama").value = d.nama;
-    document.getElementById("dAlamat").value = d.alamat;
-    document.getElementById("dTelepon").value = d.telepon;
-    document.getElementById("dJK").value = d.jenis_kelamin;
-    document.getElementById("dStrv").value = d.nomor_strv;
   }
 
-  $("#dokterModal").modal("show");
+  $('#dokterModal').modal({
+    backdrop: 'static',
+    keyboard: false
+  });
+
+  $('#dokterModal').modal('show');
 }
+  
 async function saveDokter(){
   const data={
     nama:dNama.value,
