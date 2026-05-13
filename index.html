@@ -117,190 +117,319 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
   </div>
 
-  <!-- CONTENT -->
-  <div class="p-4">
-    <!-- halaman dashboard & satwa kamu tetap di sini -->
+<!-- CONTENT -->
+<div class="p-4">
 
-<!-- DASHBOARD -->
-<div id="page-dashboard" class="page-content">
-<h3>Dashboard</h3>
-<p>Jumlah Data Satwa: <b id="statSatwa">0</b></p>
-<div class="row">
-  <div class="col-md-4">
-    <canvas id="chartSatwa"></canvas>
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page-content">
+    <h3>Dashboard</h3>
+
+    <p>Jumlah Data Satwa:
+      <b id="statSatwa">0</b>
+    </p>
+
+    <div class="row">
+
+      <div class="col-md-4">
+        <canvas id="chartSatwa"></canvas>
+      </div>
+
+      <div class="col-md-4">
+        <canvas id="chartDokter"></canvas>
+      </div>
+
+      <div class="col-md-4">
+        <canvas id="chartKesehatan"></canvas>
+      </div>
+
+    </div>
   </div>
-  <div class="col-md-4">
-    <canvas id="chartDokter"></canvas>
+
+  <!-- DATA SATWA -->
+  <div id="page-satwa" class="page-content" style="display:none">
+
+    <h3>
+      Data Satwa
+
+      <button class="btn btn-primary btn-sm"
+        onclick="openForm()">
+        Tambah
+      </button>
+    </h3>
+
+    <table class="table table-bordered">
+
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Satwa</th>
+          <th>Jenis</th>
+          <th>Ras</th>
+          <th>JK</th>
+          <th>Tgl Lahir</th>
+          <th>Umur</th>
+          <th>Klasifikasi</th>
+          <th>Pemilik</th>
+          <th>Alamat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="satwaBody"></tbody>
+
+    </table>
+
   </div>
-  <div class="col-md-4">
-    <canvas id="chartKesehatan"></canvas>
+
+  <!-- DATA DOKTER -->
+  <div id="page-dokter"
+       class="page-content"
+       style="display:none">
+
+    <h3>
+      Data Dokter Hewan
+
+      <button class="btn btn-primary btn-sm"
+        onclick="openDokter()">
+        Tambah
+      </button>
+    </h3>
+
+    <table class="table table-bordered">
+
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Alamat</th>
+          <th>Telepon</th>
+          <th>Jenis Kelamin</th>
+          <th>No STRV</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="dokterBody"></tbody>
+
+    </table>
+
   </div>
-</div>
-</div>
 
-<!-- DATA SATWA -->
-<div id="page-satwa" class="page-content" style="display:none">
+  <!-- KESEHATAN -->
+  <div id="page-kesehatan"
+       class="page-content"
+       style="display:none">
 
-<h3>
-  Data Satwa
-  <button class="btn btn-primary btn-sm" onclick="openForm()">
-    Tambah
-  </button>
-</h3>
+    <h3>
+      Manajemen Kesehatan Satwa
 
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>No</th>
-<th>Nama Satwa</th>
-<th>Jenis</th>
-<th>Ras</th>
-<th>JK</th>
-<th>Tgl Lahir</th>
-<th>Umur</th>
-<th>Klasifikasi</th>
-<th>Pemilik</th>
-<th>Alamat</th>
-<th>Aksi</th>
-</tr>
-</thead>
+      <button class="btn btn-primary btn-sm"
+        onclick="openKesehatan()">
+        Tambah
+      </button>
+    </h3>
 
-<tbody id="satwaBody"></tbody>
-</table>
+    <table class="table table-bordered">
 
-</div> <!-- PENUTUP PAGE SATWA -->
-    
-<div id="page-dokter" class="page-content" style="display:none">
-  
-<h3>Data Dokter Hewan 
-  <button class="btn btn-primary btn-sm" onclick="openDokter()">Tambah</button>
-</h3>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>No RM</th>
+          <th>Tanggal</th>
+          <th>Satwa</th>
+          <th>Dokter</th>
+          <th>Gejala Klinis</th>
+          <th>Diagnosa</th>
+          <th>Pengobatan</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
 
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>No</th>
-<th>Nama</th>
-<th>Alamat</th>
-<th>Telepon</th>
-<th>Jenis Kelamin</th>
-<th>No STRV</th>
-<th>Aksi</th>
-</tr>
-</thead>
-<tbody id="dokterBody"></tbody>
-</table>
-</div>
-    
-<!-- RESUME MEDIS -->
-<div id="page-kesehatan" class="page-content" style="display:none">
-<h3>
-  Manajemen Kesehatan Satwa
-  <button class="btn btn-primary btn-sm" onclick="openKesehatan()">Tambah</button>
-</h3>
+      <tbody id="kesehatanTable"></tbody>
 
-<table class="table table-bordered">
-<thead>
-<tr>
-  <th style="width:50px">No</th>
-  <th>No RM</th>
-  <th>Tanggal</th>
-  <th>Satwa</th>
-  <th>Dokter</th>
-  <th>Gejala Klinis</th>
-  <th>Diagnosa</th>
-  <th>Pengobatan</th>
-  <th>Aksi</th>
-</tr>
-</thead>
-<tbody id="kesehatanTable"></tbody>
-</table>
-</div>
-<!-- OBAT -->
-<div id="page-obat" class="page-content" style="display:none">
+    </table>
 
-<h3>
-  Stok Obat
-  <button class="btn btn-primary btn-sm" onclick="openObat()">
-    Tambah
-  </button>
-</h3>
+  </div>
 
-<table class="table table-bordered">
-<thead>
-<tr>
-  <th>No</th>
-  <th>Bentuk</th>
-  <th>Nama Obat</th>
-  <th>Bahan</th>
-  <th>Jenis Obat</th>
-  <th>Stok Awal</th>
-  <th>Digunakan</th>
-  <th>Sisa</th>
-  <th>Aksi</th>
-</tr>
-</thead>
-<tbody id="obatTable"></tbody>
-</table>
+  <!-- OBAT -->
+  <div id="page-obat"
+       class="page-content"
+       style="display:none">
+
+    <h3>
+      Stok Obat
+
+      <button class="btn btn-primary btn-sm"
+        onclick="openObat()">
+        Tambah
+      </button>
+    </h3>
+
+    <table class="table table-bordered">
+
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Bentuk</th>
+          <th>Nama Obat</th>
+          <th>Bahan</th>
+          <th>Jenis Obat</th>
+          <th>Stok Awal</th>
+          <th>Digunakan</th>
+          <th>Sisa</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="obatTable"></tbody>
+
+    </table>
+
+  </div>
 
 </div>
-</div> <!-- penutup p-4 -->
-  
-<!-- MODAL -->
-<div class="modal fade" id="formModal">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header"><h5>Data Satwa</h5></div>
-<div class="modal-body">
-<input id="fNama" class="form-control mb-2" placeholder="Nama Satwa">
-<input id="fJenis" class="form-control mb-2" placeholder="Jenis">
-<input id="fRas" class="form-control mb-2" placeholder="Ras">
-
-<select id="fJK" class="form-control mb-2">
-  <option value="">-- Jenis Kelamin --</option>
-  <option>Jantan</option>
-  <option>Betina</option>
-</select>
-
-<label>Tanggal Lahir</label>
-<input id="fTglLahir" type="date" class="form-control mb-2">
-
-<input id="fKlasifikasi" class="form-control mb-2" placeholder="Klasifikasi">
-<input id="fPemilik" class="form-control mb-2" placeholder="Nama Pemilik">
-<textarea id="fAlamat" class="form-control" placeholder="Alamat Pemilik"></textarea>
-</div>
-<div class="modal-footer">
-<button class="btn btn-primary" onclick="saveData()">Simpan</button>
-</div>
-</div>
-</div>
-</div>
+<!-- END p-4 -->
 
 
-<div class="modal fade" id="dokterModal">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header"><h5>Data Dokter</h5></div>
-<div class="modal-body">
 
-<input id="dNama" class="form-control mb-2" placeholder="Nama Dokter">
-<textarea id="dAlamat" class="form-control mb-2" placeholder="Alamat"></textarea>
-<input id="dTelepon" class="form-control mb-2" placeholder="Telepon">
+<!-- =========================
+     MODAL DATA SATWA
+========================= -->
 
-<select id="dJK" class="form-control mb-2">
-  <option value="">-- Jenis Kelamin --</option>
-  <option>Laki-laki</option>
-  <option>Perempuan</option>
-</select>
+<div class="modal fade"
+     id="formModal"
+     tabindex="-1">
 
-<input id="dStrv" class="form-control mb-2" placeholder="Nomor STRV">
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5>Data Satwa</h5>
+      </div>
+
+      <div class="modal-body">
+
+        <input id="fNama"
+               class="form-control mb-2"
+               placeholder="Nama Satwa">
+
+        <input id="fJenis"
+               class="form-control mb-2"
+               placeholder="Jenis">
+
+        <input id="fRas"
+               class="form-control mb-2"
+               placeholder="Ras">
+
+        <select id="fJK"
+                class="form-control mb-2">
+
+          <option value="">
+            -- Jenis Kelamin --
+          </option>
+
+          <option>Jantan</option>
+          <option>Betina</option>
+
+        </select>
+
+        <label>Tanggal Lahir</label>
+
+        <input id="fTglLahir"
+               type="date"
+               class="form-control mb-2">
+
+        <input id="fKlasifikasi"
+               class="form-control mb-2"
+               placeholder="Klasifikasi">
+
+        <input id="fPemilik"
+               class="form-control mb-2"
+               placeholder="Nama Pemilik">
+
+        <textarea id="fAlamat"
+                  class="form-control"
+                  placeholder="Alamat Pemilik"></textarea>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary"
+          onclick="saveData()">
+          Simpan
+        </button>
+      </div>
+
+    </div>
+
+  </div>
 
 </div>
-<div class="modal-footer">
-<button class="btn btn-primary" onclick="saveDokter()">Simpan</button>
-</div>
-</div>
-</div>
+
+
+
+<!-- =========================
+     MODAL DOKTER
+========================= -->
+
+<div class="modal fade"
+     id="dokterModal"
+     tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5>Data Dokter</h5>
+      </div>
+
+      <div class="modal-body">
+
+        <input id="dNama"
+               class="form-control mb-2"
+               placeholder="Nama Dokter">
+
+        <textarea id="dAlamat"
+                  class="form-control mb-2"
+                  placeholder="Alamat"></textarea>
+
+        <input id="dTelepon"
+               class="form-control mb-2"
+               placeholder="Telepon">
+
+        <select id="dJK"
+                class="form-control mb-2">
+
+          <option value="">
+            -- Jenis Kelamin --
+          </option>
+
+          <option>Laki-laki</option>
+          <option>Perempuan</option>
+
+        </select>
+
+        <input id="dStrv"
+               class="form-control mb-2"
+               placeholder="Nomor STRV">
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button class="btn btn-primary"
+          onclick="saveDokter()">
+          Simpan
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
 <div class="modal fade" id="kesehatanModal">
