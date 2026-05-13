@@ -143,7 +143,39 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     </div>
   </div>
 
+  <!-- DATA SATWA -->
+  <div id="page-satwa" class="page-content" style="display:none">
 
+    <div class="d-flex justify-content-between mb-3">
+      <h3>Data Satwa</h3>
+
+      <button class="btn btn-primary btn-sm"
+        onclick="openForm()">
+        Tambah
+      </button>
+    </div>
+
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>No</th>
+          <th>Nama Satwa</th>
+          <th>Jenis</th>
+          <th>Ras</th>
+          <th>JK</th>
+          <th>Tgl Lahir</th>
+          <th>Umur</th>
+          <th>Klasifikasi</th>
+          <th>Pemilik</th>
+          <th>Alamat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="satwaBody"></tbody>
+    </table>
+
+  </div>
 
   <!-- DATA DOKTER -->
   <div id="page-dokter"
