@@ -429,14 +429,107 @@ Simpan
 </div>
 </div>
 </div>
+<!-- MODAL DATA SATWA -->
+<div class="modal fade"
+     id="formModal"
+     tabindex="-1"
+     role="dialog">
 
+  <div class="modal-dialog modal-dialog-centered"
+       role="document">
+
+    <div class="modal-content">
+
+      <div class="modal-header bg-primary text-white">
+
+        <h5 class="modal-title">
+          Data Satwa
+        </h5>
+
+        <button type="button"
+                class="close text-white"
+                data-dismiss="modal">
+
+          <span>&times;</span>
+
+        </button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <input id="fNama"
+               class="form-control mb-2"
+               placeholder="Nama Satwa">
+
+        <input id="fJenis"
+               class="form-control mb-2"
+               placeholder="Jenis">
+
+        <input id="fRas"
+               class="form-control mb-2"
+               placeholder="Ras">
+
+        <select id="fJK"
+                class="form-control mb-2">
+
+          <option value="">
+            -- Jenis Kelamin --
+          </option>
+
+          <option>Jantan</option>
+          <option>Betina</option>
+
+        </select>
+
+        <label>Tanggal Lahir</label>
+
+        <input id="fTglLahir"
+               type="date"
+               class="form-control mb-2">
+
+        <input id="fKlasifikasi"
+               class="form-control mb-2"
+               placeholder="Klasifikasi">
+
+        <input id="fPemilik"
+               class="form-control mb-2"
+               placeholder="Nama Pemilik">
+
+        <textarea id="fAlamat"
+                  class="form-control"
+                  placeholder="Alamat Pemilik"></textarea>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button class="btn btn-secondary"
+                data-dismiss="modal">
+          Batal
+        </button>
+
+        <button class="btn btn-primary"
+                onclick="saveData()">
+          Simpan
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   
 <script>
 $(document).ready(function(){
-
+$('#formModal').on('shown.bs.modal', function () {
+  $('#fNama').trigger('focus');
+});
   $('#dokterModal').on('shown.bs.modal', function () {
     $('#dNama').trigger('focus');
   });
