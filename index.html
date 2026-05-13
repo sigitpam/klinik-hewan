@@ -618,7 +618,7 @@ async function renderCharts(){
 }
 
 if(localStorage.getItem("token")){
-  loginPage.style.display='none';
+  document.getElementById("loginPage").style.display='none';
   document.querySelector('.app-wrapper').style.display='block';
   loadData();
 }
@@ -731,10 +731,10 @@ async function openKesehatan(){
   await loadSatwaOption();
   await loadDokterOption();
 
-  kTanggal.value="";
-  kGejala.value="";
-  kDiagnosa.value="";
-  kPengobatan.value="";
+  document.getElementById("kTanggal").value = "";
+  document.getElementById("kGejala").value = "";
+  document.getElementById("kDiagnosa").value = "";
+  document.getElementById("kPengobatan").value = "";
 
   $("#kesehatanModal").modal("show");
 }
