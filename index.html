@@ -161,7 +161,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <tbody id="satwaBody"></tbody>
 </table>
 </div>
-</div>
+    
 <div id="page-dokter" class="page-content" style="display:none">
   
 <h3>Data Dokter Hewan 
@@ -656,26 +656,29 @@ function openDokter(id=null){
 
   editDokterId = id;
 
-  document.getElementById("dNama").value = "";
-  document.getElementById("dAlamat").value = "";
-  document.getElementById("dTelepon").value = "";
-  document.getElementById("dJK").value = "";
-  document.getElementById("dStrv").value = "";
+  dNama.value = "";
+  dAlamat.value = "";
+  dTelepon.value = "";
+  dJK.value = "";
+  dStrv.value = "";
 
   if(id){
 
-    const d = dokter.find(x => x.id == id);
+    const d = dokter.find(x => String(x.id) === String(id));
 
-    if(d){
-      document.getElementById("dNama").value = d.nama;
-      document.getElementById("dAlamat").value = d.alamat;
-      document.getElementById("dTelepon").value = d.telepon;
-      document.getElementById("dJK").value = d.jenis_kelamin;
-      document.getElementById("dStrv").value = d.nomor_strv;
+    if(!d){
+      alert("Data tidak ditemukan ID=" + id);
+      return;
     }
+
+    dNama.value = d.nama;
+    dAlamat.value = d.alamat;
+    dTelepon.value = d.telepon;
+    dJK.value = d.jenis_kelamin;
+    dStrv.value = d.nomor_strv;
   }
 
-  $('#dokterModal').modal('show');
+  $("#dokterModal").modal("show");
 }
 async function saveDokter(){
   const data={
