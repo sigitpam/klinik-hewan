@@ -164,7 +164,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     
 <div id="page-dokter" class="page-content" style="display:none">
   
-<h3 style="background:red;color:white">Data Dokter Hewan 
+<h3>Data Dokter Hewan 
   <button class="btn btn-primary btn-sm" onclick="openDokter()">Tambah</button>
 </h3>
 
@@ -651,16 +651,15 @@ function renderDokter(){
     `;
   });
 }
-
 function openDokter(id=null){
 
   editDokterId = id;
 
-  dNama.value = "";
-  dAlamat.value = "";
-  dTelepon.value = "";
-  dJK.value = "";
-  dStrv.value = "";
+  document.getElementById("dNama").value = "";
+  document.getElementById("dAlamat").value = "";
+  document.getElementById("dTelepon").value = "";
+  document.getElementById("dJK").value = "";
+  document.getElementById("dStrv").value = "";
 
   if(id){
 
@@ -671,11 +670,11 @@ function openDokter(id=null){
       return;
     }
 
-    dNama.value = d.nama;
-    dAlamat.value = d.alamat;
-    dTelepon.value = d.telepon;
-    dJK.value = d.jenis_kelamin;
-    dStrv.value = d.nomor_strv;
+    document.getElementById("dNama").value = d.nama;
+    document.getElementById("dAlamat").value = d.alamat;
+    document.getElementById("dTelepon").value = d.telepon;
+    document.getElementById("dJK").value = d.jenis_kelamin;
+    document.getElementById("dStrv").value = d.nomor_strv;
   }
 
   $("#dokterModal").modal("show");
