@@ -1,3 +1,4 @@
+```js
 require("dotenv").config();
 
 const express = require("express");
@@ -5,6 +6,7 @@ const { Pool } = require("pg");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const PDFDocument = require("pdfkit");
 
 const app = express();
 
@@ -411,7 +413,7 @@ app.delete("/api/dokter/:id", async(req,res)=>{
 });
 
 // =====================================
-// KESEHATAN
+// KESEHATAN + OTOMATIS KURANGI STOK
 // =====================================
 
 app.get("/api/kesehatan", async(req,res)=>{
@@ -448,7 +450,11 @@ app.get("/api/kesehatan", async(req,res)=>{
 
 app.post("/api/kesehatan", async(req,res)=>{
 
+  const client = await db.connect();
+
   try{
+
+    await client.query("BEGIN");
 
     const {
       tanggal,
@@ -456,12 +462,61 @@ app.post("/api/kesehatan", async(req,res)=>{
       dokter_id,
       gejala_klinis,
       diagnosa,
-      pengobatan
+      pengobatan,
+      obat_id,
+      jumlah_obat
     } = req.body;
 
     const nomor = "RM-" + Date.now();
 
-    const result = await db.query(`
+    // =========================
+    // CEK DAN KURANGI STOK
+    // =========================
+
+    if(obat_id && jumlah_obat){
+
+      const cekObat = await client.query(
+        "SELECT * FROM stok_obat WHERE id=$1",
+        [obat_id]
+      );
+
+      if(cekObat.rows.length === 0){
+
+        await client.query("ROLLBACK");
+
+        return res.status(404).json({
+          error:"Obat tidak ditemukan"
+        });
+      }
+
+      const obat = cekObat.rows[0];
+
+      if(Number(jumlah_obat) > Number(obat.sisa)){
+
+        await client.query("ROLLBACK");
+
+        return res.status(400).json({
+          error:"Stok obat tidak cukup"
+        });
+      }
+
+      await client.query(`
+        UPDATE stok_obat
+        SET
+        digunakan = digunakan + $1,
+        sisa = sisa - $1
+        WHERE id=$2
+      `,[
+        jumlah_obat,
+        obat_id
+      ]);
+    }
+
+    // =========================
+    // SIMPAN REKAM MEDIS
+    // =========================
+
+    const result = await client.query(`
       INSERT INTO kesehatan
       (
         nomor_rekam,
@@ -484,7 +539,101 @@ app.post("/api/kesehatan", async(req,res)=>{
       pengobatan
     ]);
 
+    await client.query("COMMIT");
+
     res.json(result.rows[0]);
+
+  }catch(err){
+
+    await client.query("ROLLBACK");
+
+    console.error(err);
+
+    res.status(500).json({
+      error:err.message
+    });
+
+  }finally{
+
+    client.release();
+  }
+});
+
+// =====================================
+// CETAK PDF
+// =====================================
+
+app.get("/api/rekam/pdf/:id", async(req,res)=>{
+
+  try{
+
+    const { id } = req.params;
+
+    const result = await db.query(`
+      SELECT
+      k.nomor_rekam,
+      TO_CHAR(k.tanggal,'DD-MM-YYYY') AS tanggal,
+      s.nama_satwa,
+      d.nama AS dokter,
+      k.gejala_klinis,
+      k.diagnosa,
+      k.pengobatan
+      FROM kesehatan k
+      LEFT JOIN satwa s ON s.id=k.satwa_id
+      LEFT JOIN dokter d ON d.id=k.dokter_id
+      WHERE k.id=$1
+    `,[id]);
+
+    if(result.rows.length === 0){
+      return res.status(404).send("Data tidak ditemukan");
+    }
+
+    const data = result.rows[0];
+
+    const doc = new PDFDocument();
+
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename=rekam_medis_${id}.pdf`
+    );
+
+    doc.pipe(res);
+
+    doc.fontSize(18)
+       .text("REKAM MEDIS SATWA",{
+         align:"center"
+       });
+
+    doc.moveDown();
+
+    doc.fontSize(12);
+
+    doc.text(`Nomor RM : ${data.nomor_rekam}`);
+    doc.text(`Tanggal  : ${data.tanggal}`);
+    doc.text(`Satwa    : ${data.nama_satwa}`);
+    doc.text(`Dokter   : ${data.dokter}`);
+
+    doc.moveDown();
+
+    doc.text("Gejala Klinis:");
+    doc.text(data.gejala_klinis);
+
+    doc.moveDown();
+
+    doc.text("Diagnosa:");
+    doc.text(data.diagnosa);
+
+    doc.moveDown();
+
+    doc.text("Pengobatan:");
+    doc.text(data.pengobatan);
+
+    doc.end();
 
   }catch(err){
 
@@ -719,3 +868,4 @@ async function startServer(){
 }
 
 startServer();
+```
