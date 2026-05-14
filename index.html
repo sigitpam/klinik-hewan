@@ -851,13 +851,7 @@ function openDokter(id = null){
       dJK.value = d.jenis_kelamin;
       dStrv.value = d.nomor_strv;
     }
-
   }
-
-  $('#dokterModal').modal({
-    backdrop: 'static',
-    keyboard: false
-  });
 
   $('#dokterModal').modal('show');
 }
@@ -1122,6 +1116,12 @@ async function hapusObat(id){
 </div> <!-- flex-fill -->
 </div> <!-- d-flex -->
 </div> <!-- wrapper -->
+<script>
+$('.modal').on('hidden.bs.modal', function () {
+  $('body').removeClass('modal-open');
 
+  $('.modal-backdrop').remove();
+});
+</script>
 </body>
 </html>
