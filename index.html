@@ -904,7 +904,7 @@ const result = await res.json();
 if(!res.ok){
   alert(result.error || "Terjadi kesalahan");
   return;
-});
+}
 
   $("#dokterModal").modal("hide");
   editDokterId=null;
