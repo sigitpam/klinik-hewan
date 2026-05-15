@@ -11,12 +11,6 @@ const app = express();
 // =====================================
 const PORT = process.env.PORT || 8080;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
-/ 2. IMPORT ROUTER (Di sini tempatnya)
-const rekamRouter = require('./routes/rekam'); 
-// Pastikan file './routes/rekam.js' sudah ada
-
-// 3. PENGGUNAAN ROUTER (Daftarkan jalurnya)
-app.use('/api/rekam', rekamRouter);
 // =====================================
 // 2. TOTAL CORS FIX (MANUAL)
 // =====================================
@@ -37,7 +31,12 @@ app.use((req, res, next) => {
 
 // Middleware standard
 app.use(express.json());
+/ 2. IMPORT ROUTER (Di sini tempatnya)
+const rekamRouter = require('./routes/rekam'); 
+// Pastikan file './routes/rekam.js' sudah ada
 
+// 3. PENGGUNAAN ROUTER (Daftarkan jalurnya)
+app.use('/api/rekam', rekamRouter);
 // =====================================
 // 3. DATABASE CONNECTION
 // =====================================
