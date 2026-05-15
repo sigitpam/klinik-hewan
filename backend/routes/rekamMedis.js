@@ -92,7 +92,7 @@ router.get("/pdf/:id", async (req, res) => {
     // ================= TANDA TANGAN =================
     currentY += 10;
     doc.text(`Yogyakarta, ${r.tanggal_format}`, 380, currentY);
-    currentY += 50;
+    currentY += 60;
     doc.font('Helvetica-Bold').text(r.dokter, 380, currentY);
     doc.font('Helvetica').text(`STRV: ${r.nomor_strv}`, 380, currentY + 15);
 
