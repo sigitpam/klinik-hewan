@@ -551,13 +551,73 @@ app.delete("/api/dokter/:id", async (req, res) => {
   }
 });
 
-// Contoh Route PDF Sederhana
+const PDFDocument = require('pdfkit');
+
 app.get("/api/rekam/pdf/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    // Di sini seharusnya ada logic generate PDF menggunakan library seperti PDFKit
-    // Untuk sementara, kita kirim pesan sukses dulu
-    res.send(`Fitur cetak PDF untuk ID ${id} sedang dalam pengembangan.`);
+
+    // 1. Ambil data lengkap dari Database
+    const result = await db.query(`
+      SELECT 
+        k.*, 
+        s.nama_satwa, s.nama_pemilik, 
+        d.nama AS nama_dokter 
+      FROM kesehatan k
+      JOIN satwa s ON s.id = k.satwa_id
+      JOIN dokter d ON d.id = k.dokter_id
+      WHERE k.id = $1
+    `, [id]);
+
+    if (result.rows.length === 0) return res.status(404).send("Data tidak ditemukan");
+    
+    const data = result.rows[0];
+
+    // 2. Setting Header agar Browser mengenali sebagai PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Rekam_Medis_${data.nomor_rekam}.pdf`);
+
+    // 3. Buat Dokumen PDF
+    const doc = new PDFDocument({ margin: 50 });
+    doc.pipe(res); // Kirim langsung ke response
+
+    // --- ISI PDF ---
+    doc.fontSize(20).text('KARTU REKAM MEDIS SATWA', { align: 'center' });
+    doc.moveDown();
+    doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke(); // Garis pembatas
+    doc.moveDown();
+
+    doc.fontSize(12).text(`Nomor Rekam : ${data.nomor_rekam}`);
+    doc.text(`Tanggal      : ${new Date(data.tanggal).toLocaleDateString('id-ID')}`);
+    doc.moveDown();
+
+    doc.fontSize(14).text('Data Pasien:', { underline: true });
+    doc.fontSize(12).text(`Nama Satwa   : ${data.nama_satwa}`);
+    doc.text(`Pemilik      : ${data.nama_pemilik}`);
+    doc.moveDown();
+
+    doc.fontSize(14).text('Hasil Pemeriksaan:', { underline: true });
+    doc.fontSize(12).text(`Gejala       : ${data.gejala_klinis}`);
+    doc.text(`Diagnosa     : ${data.diagnosa}`);
+    doc.text(`Pengobatan   : ${data.pengobatan}`);
+    doc.moveDown();
+
+    doc.fontSize(12).text(`Dokter Pemeriksa: ${data.nama_dokter}`, { align: 'right' });
+
+    // Selesai
+    doc.end();
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Gagal membuat PDF");
+  }
+});
+// HAPUS REKAM MEDIS (KESEHATAN)
+app.delete("/api/kesehatan/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM kesehatan WHERE id = $1", [id]);
+    res.json({ success: true, message: "Rekam medis berhasil dihapus" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
