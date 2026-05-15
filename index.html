@@ -612,14 +612,15 @@ async function doLogin(){
   }
 }
 function checkSession(){
-  const token = localStorage.getItem("token");
-  const loginTime = localStorage.getItem("login_time");
-  const exp = localStorage.getItem("login_exp");
 
-  if(!token || !loginTime || !exp){
-    logout();
+  const token = localStorage.getItem("token");
+
+  if(!token){
     return false;
   }
+
+  return true;
+}
 
   const now = Date.now();
 
