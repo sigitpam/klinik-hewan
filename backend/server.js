@@ -18,7 +18,7 @@ const SECRET = process.env.JWT_SECRET || "simakes_secret";
 // PENTING: Jangan gunakan app.use(cors()) jika menggunakan ini
 app.use((req, res, next) => {
   // Izinkan origin Netlify Anda
-  res.header("Access-Control-Allow-Origin", "https://klinik-hewannn.netlify.app");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
