@@ -1,101 +1,91 @@
 const express = require("express");
 const PDFDocument = require("pdfkit");
-const db = require("../db");
+const { Pool } = require("pg"); // Gunakan pg bukan mysql
 const path = require("path");
 const fs = require("fs");
 
 const router = express.Router();
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-router.get("/pdf/:id", (req, res) => {
-  const id = req.params.id;
+router.get("/pdf/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
 
-  const sql = `
-    SELECT 
-      k.nomor_rekam,
-      DATE_FORMAT(k.tanggal,'%d-%m-%Y') AS tanggal,
-      s.nama_satwa, s.jenis, s.ras,
-      TIMESTAMPDIFF(YEAR, s.tanggal_lahir, CURDATE()) AS umur,
-      s.jenis_kelamin, s.nama_pemilik,
-      d.nama AS dokter, d.nomor_strv,
-      k.gejala_klinis, k.diagnosa, k.pengobatan
-    FROM kesehatan k
-    JOIN satwa s ON k.satwa_id = s.id
-    JOIN dokter d ON k.dokter_id = d.id
-    WHERE k.id = ?
-  `;
+    const query = `
+      SELECT 
+        k.nomor_rekam,
+        TO_CHAR(k.tanggal, 'DD-MM-YYYY') AS tanggal,
+        s.nama_satwa, s.jenis, s.ras,
+        DATE_PART('year', AGE(s.tanggal_lahir)) AS umur,
+        s.jenis_kelamin, s.nama_pemilik,
+        d.nama AS dokter, d.nomor_strv,
+        k.gejala_klinis, k.diagnosa, k.pengobatan
+      FROM kesehatan k
+      JOIN satwa s ON k.satwa_id = s.id
+      JOIN dokter d ON k.dokter_id = d.id
+      WHERE k.id = $1
+    `;
 
-  db.query(sql, [id], (err, data) => {
-    if (err || data.length === 0) {
+    const result = await db.query(query, [id]);
+
+    if (result.rows.length === 0) {
       return res.status(404).send("Data tidak ditemukan");
     }
 
-    const r = data[0];
+    const r = result.rows[0];
     const doc = new PDFDocument({ margin: 40, size: 'A4' });
 
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `inline; filename=${r.nomor_rekam}.pdf`);
     doc.pipe(res);
 
-    // --- HEADER ---
-    const logoPath = path.join(__dirname, "logo.png");
-    if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, 40, 35, { width: 60 });
-    }
+    // --- HEADER (KOP SURAT) ---
+    // Jika tidak ada logo, teks akan tetap rapi
+    doc.font('Helvetica-Bold').fontSize(12).text("KEPOLISIAN DAERAH D.I. YOGYAKARTA", 110, 40);
+    doc.text("DITSAMAPTA – UNIT POLSATWA", 110, 55);
+    doc.fontSize(10).font('Helvetica').text("Jalan Ringroad Utara, Condongcatur, Sleman, DIY", 110, 70);
+    
+    doc.moveTo(40, 95).lineTo(550, 95).lineWidth(2).stroke();
+    doc.moveDown(3);
 
-    doc.fontSize(12).text("KEPOLISIAN DAERAH D.I. YOGYAKARTA", { align: "center" });
-    doc.text("DITSAMAPTA – UNIT POLSATWA", { align: "center" });
-    doc.fontSize(14).text("SIMAKES (MANAJEMEN KESEHATAN SATWA)", { align: "center", style: 'bold' });
-    doc.moveDown(0.5);
-    doc.moveTo(40, 105).lineTo(550, 105).stroke();
+    doc.font('Helvetica-Bold').fontSize(14).text("REKAM MEDIS KESEHATAN SATWA", { align: "center" });
     doc.moveDown(1.5);
 
-    doc.fontSize(12).text("REKAM MEDIS KESEHATAN SATWA", { align: "center", underline: true });
-    doc.moveDown(1);
-
-    // --- IDENTITAS (Fungsi Row) ---
-    doc.fontSize(10);
+    // --- DATA IDENTITAS ---
     const renderRow = (label, value) => {
-      const currentY = doc.y;
-      doc.text(label, 40, currentY);
-      doc.text(":", 150, currentY);
-      doc.text(value || "-", 170, currentY);
-      doc.moveDown(0.7);
+      const y = doc.y;
+      doc.font('Helvetica-Bold').text(label, 50, y);
+      doc.font('Helvetica').text(`:  ${value || "-"}`, 180, y);
+      doc.moveDown(1);
     };
 
-    renderRow("No. Rekam Medis", r.nomor_rekam);
-    renderRow("Tanggal Periksa", r.tanggal);
+    renderRow("Nomor Rekam", r.nomor_rekam);
     renderRow("Nama Satwa", r.nama_satwa);
-    renderRow("Jenis / Ras", `${r.jenis} / ${r.ras}`);
-    renderRow("Umur / Kelamin", `${r.umur} Th / ${r.jenis_kelamin}`);
-    renderRow("Nama Pemilik", r.nama_pemilik);
     renderRow("Dokter", r.dokter);
-
     doc.moveDown(1);
 
-    // --- PEMERIKSAAN (Kotak Dinamis) ---
-    const drawBox = (title, content) => {
-      doc.fontSize(11).text(title, { style: 'bold' });
+    // --- KOTAK PEMERIKSAAN ---
+    const drawSection = (title, content) => {
+      doc.font('Helvetica-Bold').fontSize(11).text(title);
       doc.moveDown(0.3);
       const startY = doc.y;
-      doc.rect(40, startY, 510, 50).stroke(); // Tinggi kotak 50 agar hemat ruang
-      doc.fontSize(10).text(content || "-", 45, startY + 5, { width: 500 });
-      doc.moveDown(4); 
+      doc.rect(50, startY, 500, 60).stroke();
+      doc.font('Helvetica').fontSize(10).text(content || "-", 55, startY + 8, { width: 490 });
+      doc.moveDown(4.5);
     };
 
-    drawBox("Gejala Klinis", r.gejala_klinis);
-    drawBox("Diagnosa", r.diagnosa);
-    drawBox("Pengobatan / Tindakan", r.pengobatan);
-
-    // --- TANDA TANGAN ---
-    doc.moveDown(2);
-    const signX = 380;
-    doc.fontSize(10).text(`Yogyakarta, ${r.tanggal}`, signX);
-    doc.moveDown(3);
-    doc.text(r.dokter, signX, { underline: true });
-    doc.text(`STRV: ${r.nomor_strv}`, signX);
+    drawSection("GEJALA KLINIS", r.gejala_klinis);
+    drawSection("DIAGNOSA", r.diagnosa);
+    drawSection("PENGOBATAN", r.pengobatan);
 
     doc.end();
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
 });
 
 module.exports = router;
