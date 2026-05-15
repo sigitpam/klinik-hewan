@@ -1073,24 +1073,32 @@ async function loadObat(){
     alert("Gagal load obat");
   }
 }
-function cetakPDF(id) {
-    window.open(API + "/rekam/pdf/" + id, "_blank");
-}
+// FUNGSI CETAK PDF YANG BENAR
+async function cetakPDF(id) {
+  try {
+    const res = await fetch(API + "/rekam/pdf/" + id);
     if (!res.ok) throw new Error("Gagal mengambil file PDF");
 
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
-    window.open(url); // Membuka file PDF di tab baru
+    window.open(url, "_blank"); 
   } catch (err) {
-    alert("Error: " + err.message);
+    console.error(err);
+    // Jika fetch gagal, coba buka langsung via window.open sebagai fallback
+    window.open(API + "/rekam/pdf/" + id, "_blank");
   }
 }
+
 async function hapusKesehatan(id) {
   if(confirm("Hapus rekam medis ini?")) {
-    const res = await fetch(API + "/kesehatan/" + id, {
-      method: "DELETE"
-    });
-    if(res.ok) loadKesehatan();
+    try {
+      const res = await fetch(API + "/kesehatan/" + id, {
+        method: "DELETE"
+      });
+      if(res.ok) loadKesehatan();
+    } catch (err) {
+      alert("Gagal menghapus data");
+    }
   }
 }
 async function saveObat(){
