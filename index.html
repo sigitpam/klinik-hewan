@@ -42,6 +42,15 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   max-height:90px;
   object-fit:contain;
 }
+   @media print {
+  #sidebar, .bg-dark, .btn, .ml-auto {
+    display: none !important; /* Sembunyikan menu saat diprint */
+  }
+  .flex-fill {
+    margin: 0;
+    padding: 0;
+  }
+}
 
 </style>
 </head>
@@ -589,15 +598,7 @@ function showPage(page){
   window.print();
     
 }
-  @media print {
-  #sidebar, .bg-dark, .btn, .ml-auto {
-    display: none !important; /* Sembunyikan menu saat diprint */
-  }
-  .flex-fill {
-    margin: 0;
-    padding: 0;
-  }
-}
+
 async function doLogin() {
   const emailInput = document.getElementById('loginEmail').value;
   const passwordInput = document.getElementById('loginPassword').value;
