@@ -529,7 +529,39 @@ app.post("/api/obat", async (req, res) => {
     });
   }
 });
+// HAPUS SATWA
+app.delete("/api/satwa/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM satwa WHERE id = $1", [id]);
+    res.json({ success: true, message: "Data satwa berhasil dihapus" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// HAPUS DOKTER
+app.delete("/api/dokter/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM dokter WHERE id = $1", [id]);
+    res.json({ success: true, message: "Data dokter berhasil dihapus" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Contoh Route PDF Sederhana
+app.get("/api/rekam/pdf/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Di sini seharusnya ada logic generate PDF menggunakan library seperti PDFKit
+    // Untuk sementara, kita kirim pesan sukses dulu
+    res.send(`Fitur cetak PDF untuk ID ${id} sedang dalam pengembangan.`);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // =====================================
 // TEST DATABASE
 // =====================================
