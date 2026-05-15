@@ -1,51 +1,36 @@
 require("dotenv").config();
-
 const express = require("express");
 const { Pool } = require("pg");
-const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const PDFDocument = require("pdfkit");
 
 const app = express();
 
 // =====================================
-// CONFIG
+// 1. CONFIG
 // =====================================
-
 const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
 
 // =====================================
-// MIDDLEWARE + CORS FIX
+// 2. MANUAL CORS FIX (HARDCODED)
 // =====================================
+// Letakkan ini sebelum middleware lainnya!
+app.use((req, res, next) => {
+  // Mengizinkan origin dari Netlify Anda secara spesifik atau wildcard
+  res.header("Access-Control-Allow-Origin", "https://klinik-hewannn.netlify.app");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
 
-// =====================================
-// MIDDLEWARE + CORS FIX
-// =====================================
-
-app.use(cors({
-  origin: true,
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Origin",
-    "X-Requested-With",
-    "Content-Type",
-    "Accept",
-    "Authorization"
-  ]
-}));
-
-app.options("*", cors());
+  // Jika browser mengirim request OPTIONS (Preflight), langsung jawab 200 OK
+  if (req.method === "OPTIONS") {
+    return res.status(200).send("OK");
+  }
+  next();
+});
 
 app.use(express.json());
-// HANDLE PREFLIGHT REQUEST
-app.use(express.json());
-
-// =====================================
-// DATABASE
-// =====================================
 
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
