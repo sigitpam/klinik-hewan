@@ -1171,15 +1171,24 @@ async function loadDokterOption(){
     </option>
   `).join("");
 }
-async function hapusObat(id){
+async function hapusObat(id) {
+  if (confirm("Apakah Anda yakin ingin menghapus data obat ini?")) {
+    try {
+      const res = await fetch(API + "/obat/" + id, {
+        method: "DELETE"
+      });
 
-  if(confirm("Hapus obat?")){
-
-    await fetch(API + "/obat/" + id,{
-      method:"DELETE"
-    });
-
-    loadObat();
+      if (res.ok) {
+        alert("Obat berhasil dihapus");
+        loadObat(); // Segarkan tabel
+      } else {
+        const result = await res.json();
+        alert("Gagal menghapus: " + (result.error || "Kesalahan server"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Koneksi gagal. Pastikan Backend sudah mendukung route DELETE /api/obat/:id");
+    }
   }
 }
 </script>
