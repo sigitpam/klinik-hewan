@@ -670,7 +670,7 @@ async function loadData(){
     const res = await fetch(API + '/satwa');
     const data = await res.json();
     satwa = data;
-    render();
+    renderSatwa();
     statSatwa.innerText = satwa.length;
     renderCharts();
 
@@ -681,36 +681,26 @@ async function loadData(){
   }
 }
 
-function render(){
-  satwaBody.innerHTML="";
-
-  satwa.forEach((r,i)=>{
-    satwaBody.innerHTML += `
-    <tr>
-      <td>${i+1}</td>
-      <td>${r.nama_satwa}</td>
-      <td>${r.jenis}</td>
-      <td>${r.ras}</td>
-      <td>${r.jenis_kelamin}</td>
-      <td>${r.tanggal_lahir}</td>
-      <td>${parseInt(r.umur || 0)} th</td>
-      <td>${r.klasifikasi}</td>
-      <td>${r.nama_pemilik}</td>
-      <td>${r.alamat_pemilik}</td>
-      <td>
-        <button class="btn btn-warning btn-sm"
-          onclick="openForm(${r.id})">
-          Edit
-        </button>
-
-        <button class="btn btn-danger btn-sm"
-          onclick="hapus(${r.id})">
-          Hapus
-        </button>
-      </td>
-    </tr>
-    `;
-  });
+function renderSatwa(){
+    const body = document.getElementById('satwaBody');
+    body.innerHTML = satwa.map((r,i)=>`
+        <tr>
+            <td>${i+1}</td>
+            <td>${r.nama_satwa}</td>
+            <td>${r.jenis}</td>
+            <td>${r.ras}</td>
+            <td>${r.jenis_kelamin}</td>
+            <td>${r.tanggal_lahir}</td>
+            <td>${parseInt(r.umur || 0)} th</td>
+            <td>${r.klasifikasi}</td>
+            <td>${r.nama_pemilik}</td>
+            <td>${r.alamat_pemilik}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="openForm(${r.id})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="hapusSatwa(${r.id})">Hapus</button>
+            </td>
+        </tr>
+    `).join("");
 }
 function openForm(id=null){
   editId=id;
@@ -782,22 +772,11 @@ async function saveData(){
   loadData();
 }
 
-async function hapus(id){
-  if(confirm('Hapus data satwa ini?')){
-    try {
-      const res = await fetch(API + '/satwa/' + id, {
-        method: 'DELETE' // Backend kita sekarang sudah mendukung ini
-      });
-      if(res.ok) {
-        loadData();
-      } else {
-        alert("Gagal menghapus data.");
-      }
-    } catch (err) {
-      alert("Koneksi gagal.");
+async function hapusSatwa(id){
+    if(confirm('Hapus data satwa ini?')){
+        const res = await fetch(API + '/satwa/' + id, { method: 'DELETE' });
+        if(res.ok) loadData();
     }
-  }
-}
 }
 
 let chartSatwa, chartDokter, chartKesehatan;
@@ -1016,38 +995,33 @@ async function saveKesehatan(){
 
   loadKesehatan();
 }
-function loadKesehatan(){
-  fetch(API + "/kesehatan")
-    .then(res => res.json())
-    .then(data => {
-
-      kesehatanTable.innerHTML = data.map((d, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${d.nomor_rekam}</td>
-          <td>${d.tanggal}</td>
-          <td>${d.nama_satwa}</td>
-          <td>${d.dokter}</td>
-          <td>${d.gejala_klinis}</td>
-          <td>${d.diagnosa}</td>
-          <td>${d.pengobatan}</td>
-// Cari baris ini di kode Anda dan ganti bagian <td> terakhir:
-<td>
-  <button class="btn btn-primary btn-sm" onclick="cetakPDF(${d.id})">
-    <i class="fas fa-file-pdf"></i> PDF
-  </button>
-  <button class="btn btn-danger btn-sm" onclick="hapusKesehatan(${d.id})">
-    <i class="fas fa-trash"></i>
-  </button>
-</td>
-        </tr>
-      `).join("");
-
-    })
-    .catch(err=>{
-      console.log(err);
-      alert("Gagal memuat data kesehatan");
-    });
+// --- MANAJEMEN KESEHATAN (RESUME MEDIS) ---
+async function loadKesehatan(){
+    try {
+        const res = await fetch(API + "/kesehatan");
+        const data = await res.json();
+        const table = document.getElementById('kesehatanTable');
+        table.innerHTML = data.map((d, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${d.nomor_rekam}</td>
+                <td>${d.tanggal}</td>
+                <td>${d.nama_satwa}</td>
+                <td>${d.dokter}</td>
+                <td>${d.gejala_klinis}</td>
+                <td>${d.diagnosa}</td>
+                <td>${d.pengobatan}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="cetakPDF(${d.id})">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="hapusKesehatan(${d.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    } catch(err) { alert("Gagal memuat data kesehatan"); }
 }
 let obat = [];
 function openObat(){
@@ -1098,12 +1072,9 @@ async function loadObat(){
     alert("Gagal load obat");
   }
 }
-async function cetakPDF(id) {
-  // Cara paling simpel: langsung buka tab baru ke arah API
-  // Jika backend tidak butuh token untuk cetak:
-  window.open(API + "/rekam/pdf/" + id, "_blank");
+function cetakPDF(id) {
+    window.open(API + "/rekam/pdf/" + id, "_blank");
 }
-
     if (!res.ok) throw new Error("Gagal mengambil file PDF");
 
     const blob = await res.blob();
