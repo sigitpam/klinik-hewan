@@ -1,4 +1,3 @@
-```js
 require("dotenv").config();
 
 const express = require("express");
@@ -18,16 +17,43 @@ const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
 
 // =====================================
-// MIDDLEWARE
+// MIDDLEWARE + CORS FIX
 // =====================================
 
 app.use(cors({
   origin: "*",
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization"
+  ]
 }));
 
-app.options("*", cors());
+// HANDLE PREFLIGHT REQUEST
+app.use((req, res, next) => {
+
+  res.header("Access-Control-Allow-Origin", "*");
+
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 app.use(express.json());
 
@@ -43,11 +69,48 @@ const db = new Pool({
 });
 
 // =====================================
+// DATABASE TEST
+// =====================================
+
+db.connect()
+  .then(client => {
+    console.log("✅ Database Connected");
+    client.release();
+  })
+  .catch(err => {
+    console.error("❌ Database Error:", err.message);
+  });
+
+// =====================================
 // ROOT
 // =====================================
 
 app.get("/", (req, res) => {
   res.send("✅ Backend SIMAKES Running");
+});
+
+// =====================================
+// CHECK USERS
+// =====================================
+
+app.get("/api/check-users", async (req, res) => {
+
+  try {
+
+    const result = await db.query(
+      "SELECT id, nama, email FROM users"
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+  }
 });
 
 // =====================================
@@ -58,9 +121,12 @@ app.post("/api/login", async (req, res) => {
 
   try {
 
+    console.log("📥 LOGIN BODY:", req.body);
+
     const { email, password } = req.body;
 
     if (!email || !password) {
+
       return res.status(400).json({
         error: "Email dan password wajib diisi"
       });
@@ -72,6 +138,7 @@ app.post("/api/login", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+
       return res.status(401).json({
         error: "Email tidak ditemukan"
       });
@@ -79,12 +146,15 @@ app.post("/api/login", async (req, res) => {
 
     const user = result.rows[0];
 
+    console.log("✅ USER FOUND:", user.email);
+
     const valid = await bcrypt.compare(
       password,
       user.password
     );
 
     if (!valid) {
+
       return res.status(401).json({
         error: "Password salah"
       });
@@ -102,13 +172,14 @@ app.post("/api/login", async (req, res) => {
     );
 
     res.json({
+      success: true,
       token,
       nama: user.nama
     });
 
   } catch (err) {
 
-    console.error(err);
+    console.error("❌ LOGIN ERROR:", err);
 
     res.status(500).json({
       error: err.message
@@ -204,84 +275,6 @@ app.post("/api/satwa", async (req, res) => {
   }
 });
 
-app.put("/api/satwa/:id", async (req, res) => {
-
-  try {
-
-    const { id } = req.params;
-
-    const {
-      nama_satwa,
-      jenis,
-      ras,
-      jenis_kelamin,
-      tanggal_lahir,
-      klasifikasi,
-      nama_pemilik,
-      alamat_pemilik
-    } = req.body;
-
-    await db.query(`
-      UPDATE satwa
-      SET
-        nama_satwa=$1,
-        jenis=$2,
-        ras=$3,
-        jenis_kelamin=$4,
-        tanggal_lahir=$5,
-        klasifikasi=$6,
-        nama_pemilik=$7,
-        alamat_pemilik=$8
-      WHERE id=$9
-    `, [
-      nama_satwa,
-      jenis,
-      ras,
-      jenis_kelamin,
-      tanggal_lahir,
-      klasifikasi,
-      nama_pemilik,
-      alamat_pemilik,
-      id
-    ]);
-
-    res.json({
-      success: true
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-app.delete("/api/satwa/:id", async (req, res) => {
-
-  try {
-
-    await db.query(
-      "DELETE FROM satwa WHERE id=$1",
-      [req.params.id]
-    );
-
-    res.json({
-      success: true
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
 // =====================================
 // DOKTER
 // =====================================
@@ -338,75 +331,6 @@ app.post("/api/dokter", async (req, res) => {
     ]);
 
     res.json(result.rows[0]);
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-app.put("/api/dokter/:id", async (req, res) => {
-
-  try {
-
-    const { id } = req.params;
-
-    const {
-      nama,
-      alamat,
-      telepon,
-      jenis_kelamin,
-      nomor_strv
-    } = req.body;
-
-    await db.query(`
-      UPDATE dokter
-      SET
-        nama=$1,
-        alamat=$2,
-        telepon=$3,
-        jenis_kelamin=$4,
-        nomor_strv=$5
-      WHERE id=$6
-    `, [
-      nama,
-      alamat,
-      telepon,
-      jenis_kelamin,
-      nomor_strv,
-      id
-    ]);
-
-    res.json({
-      success: true
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-app.delete("/api/dokter/:id", async (req, res) => {
-
-  try {
-
-    await db.query(
-      "DELETE FROM dokter WHERE id=$1",
-      [req.params.id]
-    );
-
-    res.json({
-      success: true
-    });
 
   } catch (err) {
 
@@ -565,97 +489,6 @@ app.post("/api/kesehatan", async (req, res) => {
 });
 
 // =====================================
-// PDF REKAM MEDIS
-// =====================================
-
-app.get("/api/rekam/pdf/:id", async (req, res) => {
-
-  try {
-
-    const { id } = req.params;
-
-    const result = await db.query(`
-      SELECT
-        k.nomor_rekam,
-        TO_CHAR(k.tanggal,'DD-MM-YYYY') AS tanggal,
-        s.nama_satwa,
-        d.nama AS dokter,
-        o.nama_obat,
-        k.jumlah_obat,
-        k.gejala_klinis,
-        k.diagnosa,
-        k.pengobatan
-      FROM kesehatan k
-      LEFT JOIN satwa s ON s.id=k.satwa_id
-      LEFT JOIN dokter d ON d.id=k.dokter_id
-      LEFT JOIN stok_obat o ON o.id=k.obat_id
-      WHERE k.id=$1
-    `, [id]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).send("Data tidak ditemukan");
-    }
-
-    const data = result.rows[0];
-
-    const doc = new PDFDocument();
-
-    res.setHeader(
-      "Content-Type",
-      "application/pdf"
-    );
-
-    res.setHeader(
-      "Content-Disposition",
-      `inline; filename=rekam_medis_${id}.pdf`
-    );
-
-    doc.pipe(res);
-
-    doc.fontSize(18)
-      .text("REKAM MEDIS SATWA", {
-        align: "center"
-      });
-
-    doc.moveDown();
-
-    doc.fontSize(12);
-
-    doc.text(`Nomor RM : ${data.nomor_rekam}`);
-    doc.text(`Tanggal  : ${data.tanggal}`);
-    doc.text(`Satwa    : ${data.nama_satwa}`);
-    doc.text(`Dokter   : ${data.dokter}`);
-    doc.text(`Obat     : ${data.nama_obat || "-"}`);
-    doc.text(`Jumlah   : ${data.jumlah_obat || 0}`);
-
-    doc.moveDown();
-
-    doc.text("Gejala Klinis:");
-    doc.text(data.gejala_klinis || "-");
-
-    doc.moveDown();
-
-    doc.text("Diagnosa:");
-    doc.text(data.diagnosa || "-");
-
-    doc.moveDown();
-
-    doc.text("Pengobatan:");
-    doc.text(data.pengobatan || "-");
-
-    doc.end();
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-// =====================================
 // OBAT
 // =====================================
 
@@ -726,73 +559,6 @@ app.post("/api/obat", async (req, res) => {
   }
 });
 
-app.delete("/api/obat/:id", async (req, res) => {
-
-  try {
-
-    await db.query(
-      "DELETE FROM stok_obat WHERE id=$1",
-      [req.params.id]
-    );
-
-    res.json({
-      success: true
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-// =====================================
-// STATISTIK
-// =====================================
-
-app.get("/api/stat/dokter", async (req, res) => {
-
-  try {
-
-    const result = await db.query(
-      "SELECT COUNT(*) AS total FROM dokter"
-    );
-
-    res.json({
-      total: result.rows[0].total
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
-app.get("/api/stat/kesehatan", async (req, res) => {
-
-  try {
-
-    const result = await db.query(
-      "SELECT COUNT(*) AS total FROM kesehatan"
-    );
-
-    res.json({
-      total: result.rows[0].total
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: err.message
-    });
-  }
-});
-
 // =====================================
 // TEST DATABASE
 // =====================================
@@ -826,7 +592,7 @@ app.get("/api/test-db", async (req, res) => {
 
 app.use((err, req, res, next) => {
 
-  console.error(err.stack);
+  console.error("❌ SERVER ERROR:", err.stack);
 
   res.status(500).json({
     error: "Internal Server Error"
@@ -837,26 +603,7 @@ app.use((err, req, res, next) => {
 // START SERVER
 // =====================================
 
-async function startServer() {
+app.listen(PORT, "0.0.0.0", () => {
 
-  try {
-
-    const client = await db.connect();
-
-    console.log("✅ Database Connected");
-
-    client.release();
-
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-
-  } catch (err) {
-
-    console.error("❌ Failed start:", err.message);
-
-    process.exit(1);
-  }
-}
-startServer();
-```
+  console.log(`🚀 Server running on port ${PORT}`);
+});
