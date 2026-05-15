@@ -585,6 +585,19 @@ function showPage(page){
       break;
   }
 }
+  function printHalaman() {
+  window.print();
+    
+}
+  @media print {
+  #sidebar, .bg-dark, .btn, .ml-auto {
+    display: none !important; /* Sembunyikan menu saat diprint */
+  }
+  .flex-fill {
+    margin: 0;
+    padding: 0;
+  }
+}
 async function doLogin() {
   const emailInput = document.getElementById('loginEmail').value;
   const passwordInput = document.getElementById('loginPassword').value;
@@ -771,8 +784,19 @@ async function saveData(){
 
 async function hapus(id){
   if(confirm('Hapus data?')){
-    await fetch(API+'/satwa/'+id,{method:'DELETE'});
-    loadData();
+    try {
+      const res = await fetch(API + '/satwa/' + id, {
+        method: 'DELETE',
+        headers: authHeader() // Tambahkan ini agar diizinkan oleh server
+      });
+      if(res.ok) {
+        loadData();
+      } else {
+        alert("Gagal menghapus: Anda mungkin tidak memiliki akses.");
+      }
+    } catch (err) {
+      alert("Koneksi gagal.");
+    }
   }
 }
 
@@ -933,13 +957,17 @@ async function saveDokter() {
     loadDokter();
 }
 
+// Cek apakah ID muncul di console saat tombol diklik
 async function hapusDokter(id){
+  console.log("Menghapus dokter dengan ID:", id); 
   if(confirm("Hapus dokter?")){
-    await fetch(API+"/dokter/"+id,{method:"DELETE"});
-    loadDokter();
+    const res = await fetch(API + "/dokter/" + id, {
+      method: "DELETE",
+      headers: authHeader() // Gunakan header token!
+    });
+    if(res.ok) loadDokter();
   }
 }
-
 let kesehatan = [];
 
 async function openKesehatan(){
@@ -1067,10 +1095,22 @@ async function loadObat(){
     alert("Gagal load obat");
   }
 }
-function cetakPDF(id){
- window.open(API + "/rekam/pdf/" + id);
-}
+async function cetakPDF(id) {
+  try {
+    const res = await fetch(API + "/rekam/pdf/" + id, {
+      method: 'GET',
+      headers: authHeader() // Mengirim token agar diizinkan backend
+    });
 
+    if (!res.ok) throw new Error("Gagal mengambil file PDF");
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    window.open(url); // Membuka file PDF di tab baru
+  } catch (err) {
+    alert("Error: " + err.message);
+  }
+}
 
 async function saveObat(){
 
