@@ -9,7 +9,7 @@ const app = express();
 // =====================================
 // 1. CONFIG
 // =====================================
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
 
 // =====================================
