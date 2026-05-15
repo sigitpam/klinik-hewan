@@ -718,10 +718,10 @@ async function saveData(){
     nama_pemilik:fPemilik.value,
     alamat_pemilik:fAlamat.value
   }
-    if(!fNama.value){
+if(!fNama.value){
   alert("Nama satwa wajib diisi");
   return;
-};
+}
 
   let url=API+"/satwa", method="POST";
   if(editId){ url=API+"/satwa/"+editId; method="PUT"; }
@@ -874,7 +874,7 @@ async function saveDokter(){
     if(!dNama.value){
   alert("Nama dokter wajib diisi");
   return;
-};
+}
 
   let url=API+"/dokter", method="POST";
   if(editDokterId){
