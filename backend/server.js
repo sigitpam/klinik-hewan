@@ -554,7 +554,16 @@ app.delete("/api/dokter/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
+// HAPUS OBAT
+app.delete("/api/obat/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM stok_obat WHERE id = $1", [id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Gagal menghapus obat. Mungkin data sedang digunakan di rekam medis." });
+  }
+});
 const PDFDocument = require('pdfkit');
 
 app.get("/api/rekam/pdf/:id", async (req, res) => {
