@@ -13,35 +13,35 @@ const PORT = process.env.PORT || 3000;
 const SECRET = process.env.JWT_SECRET || "simakes_secret";
 
 // =====================================
-// 2. MANUAL CORS FIX (HARDCODED)
+// 2. TOTAL CORS FIX (MANUAL)
 // =====================================
-// Letakkan ini sebelum middleware lainnya!
+// PENTING: Jangan gunakan app.use(cors()) jika menggunakan ini
 app.use((req, res, next) => {
-  // Mengizinkan origin dari Netlify Anda secara spesifik atau wildcard
+  // Izinkan origin Netlify Anda
   res.header("Access-Control-Allow-Origin", "https://klinik-hewannn.netlify.app");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
 
-  // Jika browser mengirim request OPTIONS (Preflight), langsung jawab 200 OK
+  // Tangani Preflight Request (OPTIONS) secara eksplisit
   if (req.method === "OPTIONS") {
     return res.status(200).send("OK");
   }
   next();
 });
 
+// Middleware standard
 app.use(express.json());
 
+// =====================================
+// 3. DATABASE CONNECTION
+// =====================================
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
 });
-
-// =====================================
-// DATABASE TEST
-// =====================================
 
 db.connect()
   .then(client => {
