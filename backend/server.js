@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 // Middleware standard
 app.use(express.json());
-/ 2. IMPORT ROUTER (Di sini tempatnya)
+// 2. IMPORT ROUTER (Di sini tempatnya)
 const rekamRouter = require('./routes/rekam'); 
 // Pastikan file './routes/rekam.js' sudah ada
 
