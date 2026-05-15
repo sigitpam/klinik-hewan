@@ -783,21 +783,21 @@ async function saveData(){
 }
 
 async function hapus(id){
-  if(confirm('Hapus data?')){
+  if(confirm('Hapus data satwa ini?')){
     try {
       const res = await fetch(API + '/satwa/' + id, {
-        method: 'DELETE',
-        headers: authHeader() // Tambahkan ini agar diizinkan oleh server
+        method: 'DELETE' // Backend kita sekarang sudah mendukung ini
       });
       if(res.ok) {
         loadData();
       } else {
-        alert("Gagal menghapus: Anda mungkin tidak memiliki akses.");
+        alert("Gagal menghapus data.");
       }
     } catch (err) {
       alert("Koneksi gagal.");
     }
   }
+}
 }
 
 let chartSatwa, chartDokter, chartKesehatan;
@@ -1031,12 +1031,15 @@ function loadKesehatan(){
           <td>${d.gejala_klinis}</td>
           <td>${d.diagnosa}</td>
           <td>${d.pengobatan}</td>
-          <td>
-            <button class="btn btn-danger btn-sm"
-              onclick="cetakPDF(${d.id})">
-              PDF
-            </button>
-          </td>
+// Cari baris ini di kode Anda dan ganti bagian <td> terakhir:
+<td>
+  <button class="btn btn-primary btn-sm" onclick="cetakPDF(${d.id})">
+    <i class="fas fa-file-pdf"></i> PDF
+  </button>
+  <button class="btn btn-danger btn-sm" onclick="hapusKesehatan(${d.id})">
+    <i class="fas fa-trash"></i>
+  </button>
+</td>
         </tr>
       `).join("");
 
@@ -1096,11 +1099,10 @@ async function loadObat(){
   }
 }
 async function cetakPDF(id) {
-  try {
-    const res = await fetch(API + "/rekam/pdf/" + id, {
-      method: 'GET',
-      headers: authHeader() // Mengirim token agar diizinkan backend
-    });
+  // Cara paling simpel: langsung buka tab baru ke arah API
+  // Jika backend tidak butuh token untuk cetak:
+  window.open(API + "/rekam/pdf/" + id, "_blank");
+}
 
     if (!res.ok) throw new Error("Gagal mengambil file PDF");
 
@@ -1111,7 +1113,14 @@ async function cetakPDF(id) {
     alert("Error: " + err.message);
   }
 }
-
+async function hapusKesehatan(id) {
+  if(confirm("Hapus rekam medis ini?")) {
+    const res = await fetch(API + "/kesehatan/" + id, {
+      method: "DELETE"
+    });
+    if(res.ok) loadKesehatan();
+  }
+}
 async function saveObat(){
 
   const data = {
