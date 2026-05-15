@@ -708,33 +708,50 @@ function openForm(id=null){
 }
 
 async function saveData(){
-  const data={
-    nama_satwa:fNama.value,
-    jenis:fJenis.value,
-    ras:fRas.value,
-    jenis_kelamin:fJK.value,
-    tanggal_lahir:fTglLahir.value,
-    klasifikasi:fKlasifikasi.value,
-    nama_pemilik:fPemilik.value,
-    alamat_pemilik:fAlamat.value
+
+  const data = {
+    nama_satwa: fNama.value,
+    jenis: fJenis.value,
+    ras: fRas.value,
+    jenis_kelamin: fJK.value,
+    tanggal_lahir: fTglLahir.value,
+    klasifikasi: fKlasifikasi.value,
+    nama_pemilik: fPemilik.value,
+    alamat_pemilik: fAlamat.value
+  };
+
+  if(!fNama.value){
+    alert("Nama satwa wajib diisi");
+    return;
   }
-if(!fNama.value){
-  alert("Nama satwa wajib diisi");
-  return;
-}
 
-  let url=API+"/satwa", method="POST";
-  if(editId){ url=API+"/satwa/"+editId; method="PUT"; }
+  let url = API + "/satwa";
+  let method = "POST";
 
-const result = await res.json();
+  if(editId){
+    url = API + "/satwa/" + editId;
+    method = "PUT";
+  }
 
-if(!res.ok){
-  alert(result.error || "Terjadi kesalahan");
-  return;
-})
+  const res = await fetch(url,{
+    method,
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+
+  if(!res.ok){
+    alert(result.error || "Terjadi kesalahan");
+    return;
+  }
 
   $("#formModal").modal("hide");
-  editId=null;
+
+  editId = null;
+
   loadData();
 }
 
