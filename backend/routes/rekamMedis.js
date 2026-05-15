@@ -1,6 +1,6 @@
 const express = require("express");
 const PDFDocument = require("pdfkit");
-const { Pool } = require("pg"); // Gunakan pg bukan mysql
+const { Pool } = require("pg");
 const path = require("path");
 const fs = require("fs");
 
@@ -17,10 +17,10 @@ router.get("/pdf/:id", async (req, res) => {
     const query = `
       SELECT 
         k.nomor_rekam,
-        TO_CHAR(k.tanggal, 'DD-MM-YYYY') AS tanggal,
-        s.nama_satwa, s.jenis, s.ras,
+        TO_CHAR(k.tanggal, 'DD-MM-YYYY') AS tanggal_format,
+        s.nama_satwa, s.jenis, s.ras, s.jenis_kelamin,
         DATE_PART('year', AGE(s.tanggal_lahir)) AS umur,
-        s.jenis_kelamin, s.nama_pemilik,
+        s.nama_pemilik,
         d.nama AS dokter, d.nomor_strv,
         k.gejala_klinis, k.diagnosa, k.pengobatan
       FROM kesehatan k
@@ -31,60 +31,75 @@ router.get("/pdf/:id", async (req, res) => {
 
     const result = await db.query(query, [id]);
 
-    if (result.rows.length === 0) {
-      return res.status(404).send("Data tidak ditemukan");
-    }
-
+    if (result.rows.length === 0) return res.status(404).send("Data tidak ditemukan");
     const r = result.rows[0];
-    const doc = new PDFDocument({ margin: 40, size: 'A4' });
 
+    const doc = new PDFDocument({ margin: 40, size: 'A4' });
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `inline; filename=${r.nomor_rekam}.pdf`);
     doc.pipe(res);
 
-    // --- HEADER (KOP SURAT) ---
-    // Jika tidak ada logo, teks akan tetap rapi
-    doc.font('Helvetica-Bold').fontSize(12).text("KEPOLISIAN DAERAH D.I. YOGYAKARTA", 110, 40);
-    doc.text("DITSAMAPTA – UNIT POLSATWA", 110, 55);
-    doc.fontSize(10).font('Helvetica').text("Jalan Ringroad Utara, Condongcatur, Sleman, DIY", 110, 70);
-    
-    doc.moveTo(40, 95).lineTo(550, 95).lineWidth(2).stroke();
-    doc.moveDown(3);
+    // ================= HEADER (KOP SURAT) =================
+    // CARA FIX LOGO: Letakkan file logo.png di dalam folder 'routes'
+    const logoPath = path.join(__dirname, "logo.png");
+    if (fs.existsSync(logoPath)) {
+      doc.image(logoPath, 50, 35, { width: 65 });
+    }
 
-    doc.font('Helvetica-Bold').fontSize(14).text("REKAM MEDIS KESEHATAN SATWA", { align: "center" });
+    doc.font('Helvetica-Bold').fontSize(12).text("KEPOLISIAN DAERAH D.I. YOGYAKARTA", 130, 40);
+    doc.text("DITSAMAPTA – UNIT POLSATWA", 130, 55);
+    doc.text("SISTEM INFORMASI MANAJEMEN KESEHATAN SATWA", 130, 70);
+    doc.text("(SIMAKES)", 130, 85, { align: 'left' });
+    
+    doc.moveTo(40, 105).lineTo(550, 105).lineWidth(1.5).stroke(); 
+    doc.moveDown(2);
+
+    doc.font('Helvetica-Bold').fontSize(13).text("REKAM MEDIS KESEHATAN SATWA", { align: "center" });
     doc.moveDown(1.5);
 
-    // --- DATA IDENTITAS ---
-    const renderRow = (label, value) => {
-      const y = doc.y;
-      doc.font('Helvetica-Bold').text(label, 50, y);
-      doc.font('Helvetica').text(`:  ${value || "-"}`, 180, y);
-      doc.moveDown(1);
+    // ================= DATA IDENTITAS =================
+    doc.font('Helvetica').fontSize(10);
+    const renderRow = (label, value, yPos) => {
+      doc.font('Helvetica').text(label, 60, yPos);
+      doc.text(`:   ${value || "-"}`, 180, yPos);
     };
 
-    renderRow("Nomor Rekam", r.nomor_rekam);
-    renderRow("Nama Satwa", r.nama_satwa);
-    renderRow("Dokter", r.dokter);
-    doc.moveDown(1);
+    let currentY = 150;
+    renderRow("Nomor Rekam Medis", r.nomor_rekam, currentY); currentY += 18;
+    renderRow("Tanggal", r.tanggal_format, currentY); currentY += 18;
+    renderRow("Nama Satwa", r.nama_satwa, currentY); currentY += 18;
+    renderRow("Jenis / Ras", `${r.jenis} / ${r.ras}`, currentY); currentY += 18;
+    renderRow("Jenis Kelamin", r.jenis_kelamin, currentY); currentY += 18;
+    renderRow("Umur", `${r.umur} Tahun`, currentY); currentY += 18;
+    renderRow("Pemilik", r.nama_pemilik, currentY); currentY += 18;
+    renderRow("Dokter Pemeriksa", r.dokter, currentY); currentY += 18;
+    renderRow("Nomor STRV", r.nomor_strv, currentY); currentY += 25;
 
-    // --- KOTAK PEMERIKSAAN ---
-    const drawSection = (title, content) => {
-      doc.font('Helvetica-Bold').fontSize(11).text(title);
-      doc.moveDown(0.3);
-      const startY = doc.y;
-      doc.rect(50, startY, 500, 60).stroke();
-      doc.font('Helvetica').fontSize(10).text(content || "-", 55, startY + 8, { width: 490 });
-      doc.moveDown(4.5);
+    // ================= HASIL PEMERIKSAAN =================
+    doc.font('Helvetica-Bold').fontSize(11).text("HASIL PEMERIKSAAN", 60, currentY, { underline: true });
+    currentY += 20;
+
+    const drawBox = (title, content, y) => {
+      doc.font('Helvetica').fontSize(10).text(title, 60, y);
+      doc.rect(60, y + 15, 480, 60).stroke();
+      doc.text(content || "-", 70, y + 25, { width: 460 });
+      return y + 85;
     };
 
-    drawSection("GEJALA KLINIS", r.gejala_klinis);
-    drawSection("DIAGNOSA", r.diagnosa);
-    drawSection("PENGOBATAN", r.pengobatan);
+    currentY = drawBox("Diagnosa", r.diagnosa, currentY);
+    currentY = drawBox("Pengobatan / Tindakan", r.pengobatan, currentY);
+
+    // ================= TANDA TANGAN =================
+    currentY += 10;
+    doc.text(`Yogyakarta, ${r.tanggal_format}`, 380, currentY);
+    currentY += 50;
+    doc.font('Helvetica-Bold').text(r.dokter, 380, currentY);
+    doc.font('Helvetica').text(`STRV: ${r.nomor_strv}`, 380, currentY + 15);
 
     doc.end();
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server Error");
+    res.status(500).send("Gagal generate PDF");
   }
 });
 
