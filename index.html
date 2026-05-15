@@ -586,59 +586,71 @@ function showPage(page){
   }
 }
 async function doLogin(){
-  const res = await fetch(API + '/login',{
-    method:'POST',
-    headers: authHeader(),
-    body:JSON.stringify({
-      email: loginEmail.value,
-      password: loginPassword.value
-    })
-  });
-
-  const data = await res.json();
-
-  if(res.ok){
-    // Simpan token saja sudah cukup untuk menandai login berhasil
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("login_time", Date.now());
-    localStorage.setItem("login_exp", 60 * 60 * 1000); 
-
-    // Langsung pindah tampilan
-    document.getElementById('loginPage').style.display='none';
-    document.querySelector('.app-wrapper').style.display='block';
-    loadData(); // Ambil data satwa setelah login
-  } else {
-    alert("Login Gagal: " + (data.msg || data.error || "Unknown error"));
-  }
-}
-function checkSession(){
-
-  const token = localStorage.getItem("token");
-
-  if(!token){
-    return false;
+  // 1. Tambahkan pengecekan sederhana agar tidak error jika input kosong
+  if (!loginEmail.value || !loginPassword.value) {
+    alert("Email dan Password harus diisi!");
+    return;
   }
 
-  return true;
-}
+  try {
+    const res = await fetch(API + '/login', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+        // Tidak perlu authHeader() di sini karena kita sedang mencari token
+      },
+      body: JSON.stringify({
+        email: loginEmail.value,
+        password: loginPassword.value
+      })
+    });
 
-  const now = Date.now();
+    const data = await res.json();
 
-  if(now - loginTime > exp){
-    alert("Session login telah habis (60 menit). Silakan login kembali.");
-    logout();
-    return false;
+    if (res.ok) {
+      // 2. Simpan token dan metadata session
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("login_time", Date.now());
+      localStorage.setItem("login_exp", 60 * 60 * 1000); 
+
+      // 3. Update UI
+      document.getElementById('loginPage').style.display = 'none';
+      document.querySelector('.app-wrapper').style.display = 'block';
+      
+      // 4. Load initial data
+      loadData(); 
+    } else {
+      alert("Login Gagal: " + (data.msg || data.error || "Cek kembali email/password"));
+    }
+  } catch (error) {
+    console.error("Login Error:", error);
+    alert("Terjadi kesalahan koneksi ke server.");
   }
+}
+function checkSession() {
+    const token = localStorage.getItem("token");
+    const loginTime = localStorage.getItem("login_time");
+    const exp = localStorage.getItem("login_exp");
 
-  return true;
+    if (!token) {
+        return false;
+    }
+
+    // Pengecekan masa berlaku session
+    const now = Date.now();
+    if (loginTime && exp && (now - loginTime > exp)) {
+        alert("Session login telah habis. Silakan login kembali.");
+        logout();
+        return false;
+    }
+
+    return true;
 }
 
-function logout(){
-  localStorage.clear();
-  location.reload();
+function logout() {
+    localStorage.clear();
+    location.reload();
 }
-
-
 async function loadData(){
   try{
     const res = await fetch(API + '/satwa');
@@ -881,35 +893,43 @@ function openDokter(id = null){
   $('#dokterModal').modal('show');
 }
   
-async function saveDokter(){
-  const data={
-    nama:dNama.value,
-    alamat:dAlamat.value,
-    telepon:dTelepon.value,
-    jenis_kelamin:dJK.value,
-    nomor_strv:dStrv.value
-  }
-    if(!dNama.value){
-  alert("Nama dokter wajib diisi");
-  return;
-}
+async function saveDokter() {
+    const data = {
+        nama: dNama.value,
+        alamat: dAlamat.value,
+        telepon: dTelepon.value,
+        jenis_kelamin: dJK.value,
+        nomor_strv: dStrv.value
+    };
 
-  let url=API+"/dokter", method="POST";
-  if(editDokterId){
-    url=API+"/dokter/"+editDokterId;
-    method="PUT";
-  }
+    if (!dNama.value) {
+        alert("Nama dokter wajib diisi");
+        return;
+    }
 
-const result = await res.json();
+    let url = API + "/dokter", method = "POST";
+    if (editDokterId) {
+        url = API + "/dokter/" + editDokterId;
+        method = "PUT";
+    }
 
-if(!res.ok){
-  alert(result.error || "Terjadi kesalahan");
-  return;
-}
+    // TAMBAHKAN BAGIAN FETCH INI:
+    const res = await fetch(url, {
+        method: method,
+        headers: authHeader(),
+        body: JSON.stringify(data)
+    });
 
-  $("#dokterModal").modal("hide");
-  editDokterId=null;
-  loadDokter();
+    const result = await res.json();
+
+    if (!res.ok) {
+        alert(result.error || "Terjadi kesalahan");
+        return;
+    }
+
+    $("#dokterModal").modal("hide");
+    editDokterId = null;
+    loadDokter();
 }
 
 async function hapusDokter(id){
