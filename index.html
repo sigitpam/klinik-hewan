@@ -585,46 +585,47 @@ function showPage(page){
       break;
   }
 }
-async function doLogin(){
-  // 1. Tambahkan pengecekan sederhana agar tidak error jika input kosong
-  if (!loginEmail.value || !loginPassword.value) {
+async function doLogin() {
+  const emailInput = document.getElementById('loginEmail').value;
+  const passwordInput = document.getElementById('loginPassword').value;
+
+  if (!emailInput || !passwordInput) {
     alert("Email dan Password harus diisi!");
     return;
   }
 
   try {
-    const res = await fetch(API + '/login', {
+    // Pastikan URL AKHIR adalah: https://.../api/login
+    const res = await fetch(`${API}/login`, { 
       method: 'POST',
+      mode: 'cors', // Tambahkan mode cors secara eksplisit
       headers: {
-        "Content-Type": "application/json"
-        // Tidak perlu authHeader() di sini karena kita sedang mencari token
+        "Content-Type": "application/json",
+        "Accept": "application/json"
       },
       body: JSON.stringify({
-        email: loginEmail.value,
-        password: loginPassword.value
+        email: emailInput,
+        password: passwordInput
       })
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      // 2. Simpan token dan metadata session
       localStorage.setItem("token", data.token);
       localStorage.setItem("login_time", Date.now());
       localStorage.setItem("login_exp", 60 * 60 * 1000); 
 
-      // 3. Update UI
       document.getElementById('loginPage').style.display = 'none';
       document.querySelector('.app-wrapper').style.display = 'block';
       
-      // 4. Load initial data
       loadData(); 
     } else {
-      alert("Login Gagal: " + (data.msg || data.error || "Cek kembali email/password"));
+      alert("Login Gagal: " + (data.error || "Cek kembali email/password"));
     }
   } catch (error) {
     console.error("Login Error:", error);
-    alert("Terjadi kesalahan koneksi ke server.");
+    alert("Koneksi ke server gagal. Pastikan Backend di Railway sudah aktif.");
   }
 }
 function checkSession() {
