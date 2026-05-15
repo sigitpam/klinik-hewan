@@ -588,7 +588,7 @@ function showPage(page){
 async function doLogin(){
   const res = await fetch(API + '/login',{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers: authHeader(),
     body:JSON.stringify({
       email: loginEmail.value,
       password: loginPassword.value
@@ -666,7 +666,7 @@ function render(){
       <td>${r.ras}</td>
       <td>${r.jenis_kelamin}</td>
       <td>${r.tanggal_lahir}</td>
-      <td>${r.umur} th</td>
+      <td>${parseInt(r.umur || 0)} th</td>
       <td>${r.klasifikasi}</td>
       <td>${r.nama_pemilik}</td>
       <td>${r.alamat_pemilik}</td>
@@ -726,11 +726,12 @@ async function saveData(){
   let url=API+"/satwa", method="POST";
   if(editId){ url=API+"/satwa/"+editId; method="PUT"; }
 
-  await fetch(url,{
-    method,
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data)
-  });
+const result = await res.json();
+
+if(!res.ok){
+  alert(result.error || "Terjadi kesalahan");
+  return;
+});
 
   $("#formModal").modal("hide");
   editId=null;
@@ -788,7 +789,7 @@ async function renderCharts(){
   });
 }
 
-if(localStorage.getItem("token")){
+if(checkSession()){
   document.getElementById("loginPage").style.display='none';
   document.querySelector('.app-wrapper').style.display='block';
   loadData();
@@ -802,7 +803,13 @@ async function loadDokter(){
   dokter = await res.json();
   renderDokter();
 }
-
+  
+function authHeader(){
+  return {
+    "Content-Type":"application/json",
+    "Authorization":"Bearer " + localStorage.getItem("token")
+  };
+}
 function renderDokter(){
   dokterBody.innerHTML = "";
 
@@ -875,11 +882,12 @@ async function saveDokter(){
     method="PUT";
   }
 
-  await fetch(url,{
-    method,
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data)
-  });
+const result = await res.json();
+
+if(!res.ok){
+  alert(result.error || "Terjadi kesalahan");
+  return;
+});
 
   $("#dokterModal").modal("hide");
   editDokterId=null;
